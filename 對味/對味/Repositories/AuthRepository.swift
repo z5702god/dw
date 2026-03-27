@@ -34,6 +34,14 @@ final class AuthRepository {
         try Auth.auth().signOut()
     }
 
+    func deleteAccount() async throws {
+        guard let uid = currentUser?.uid else { return }
+        // 刪除 Firestore 使用者文件
+        try await FirebaseConfig.userDocument(uid).delete()
+        // 刪除 Firebase Auth 帳號（auth state listener 會自動清理）
+        try await Auth.auth().currentUser?.delete()
+    }
+
     private func listenToUserDocument(uid: String) {
         userListener?.remove()
         userListener = FirebaseConfig.userDocument(uid)

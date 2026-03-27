@@ -33,4 +33,17 @@ final class AuthViewModel {
     func signOut() {
         try? authRepo.signOut()
     }
+
+    func deleteAccount() {
+        isLoading = true
+        errorMessage = nil
+        Task {
+            do {
+                try await authRepo.deleteAccount()
+            } catch {
+                errorMessage = "刪除帳號失敗：\(error.localizedDescription)"
+            }
+            isLoading = false
+        }
+    }
 }

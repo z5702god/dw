@@ -7,6 +7,7 @@ struct SettingsView: View {
 
     @State private var logoutTrigger = false
     @State private var showLogoutAlert = false
+    @State private var showDeleteAlert = false
 
     var body: some View {
         NavigationStack {
@@ -25,6 +26,14 @@ struct SettingsView: View {
                             }
                         }
                     }
+                }
+
+                // Delete account
+                Section {
+                    Button("刪除帳號") {
+                        showDeleteAlert = true
+                    }
+                    .foregroundStyle(.red)
                 }
 
                 // Logout
@@ -52,6 +61,15 @@ struct SettingsView: View {
                 }
             }
             .sensoryFeedback(.warning, trigger: logoutTrigger)
+            .alert("確定要刪除帳號嗎？", isPresented: $showDeleteAlert) {
+                Button("取消", role: .cancel) { }
+                Button("確定刪除", role: .destructive) {
+                    authViewModel.deleteAccount()
+                    dismiss()
+                }
+            } message: {
+                Text("刪除帳號將永久移除所有資料，此操作無法復原。確定要刪除嗎？")
+            }
             .alert("確定要登出嗎？", isPresented: $showLogoutAlert) {
                 Button("取消", role: .cancel) { }
                 Button("登出", role: .destructive) {
