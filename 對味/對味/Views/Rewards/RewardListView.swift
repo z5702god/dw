@@ -36,7 +36,7 @@ struct RewardListView: View {
             .toolbar {
                 if viewModel.isLuke {
                     ToolbarItem(placement: .principal) {
-                        Text("Kathy 的獎勵")
+                        Text("俐瑤的獎勵")
                             .font(.headline)
                     }
                 }
@@ -52,7 +52,7 @@ struct RewardListView: View {
                 viewModel.checkForNewRedemptions()
             }
             // MARK: - Alerts
-            .alert("Kathy 兌換了獎勵！", isPresented: $viewModel.showRedemptionAlert) {
+            .alert("俐瑤兌換了獎勵！", isPresented: $viewModel.showRedemptionAlert) {
                 Button("好的") {
                     viewModel.showRedemptionAlert = false
                 }

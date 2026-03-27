@@ -148,7 +148,7 @@ final class AuthRepository {
 
     private static func expectedDisplayName(for uid: String) -> String? {
         switch uid {
-        case "cdQV8F8j9NYyfI1Y4kKNV1hWrPB2": return "Kathy"
+        case "cdQV8F8j9NYyfI1Y4kKNV1hWrPB2": return "俐瑤"
         case "M0143zxobBXxZ6vAAgX6jq8ll1g2": return "Luke"
         default: return nil
         }
@@ -167,16 +167,21 @@ final class AuthRepository {
     var partnerUser: AppUser?
     private var partnerListener: ListenerRegistration?
 
+    private static func partnerId(for uid: String) -> String {
+        switch uid {
+        case "cdQV8F8j9NYyfI1Y4kKNV1hWrPB2": return "M0143zxobBXxZ6vAAgX6jq8ll1g2" // 俐瑤 → Luke
+        case "M0143zxobBXxZ6vAAgX6jq8ll1g2": return "cdQV8F8j9NYyfI1Y4kKNV1hWrPB2" // Luke → 俐瑤
+        default: return "M0143zxobBXxZ6vAAgX6jq8ll1g2" // test → Luke
+        }
+    }
+
     private func listenToPartner(coupleId: String, myUid: String) {
         partnerListener?.remove()
-        partnerListener = FirebaseConfig.usersCollection
-            .whereField("coupleId", isEqualTo: coupleId)
+        let pid = Self.partnerId(for: myUid)
+        partnerListener = FirebaseConfig.userDocument(pid)
             .addSnapshotListener { [weak self] snapshot, error in
-                guard let documents = snapshot?.documents else { return }
-                self?.partnerUser = documents.compactMap { doc in
-                    let user = try? doc.data(as: AppUser.self)
-                    return user?.id != myUid ? user : nil
-                }.first
+                guard let snapshot, snapshot.exists else { return }
+                self?.partnerUser = try? snapshot.data(as: AppUser.self)
             }
     }
 }

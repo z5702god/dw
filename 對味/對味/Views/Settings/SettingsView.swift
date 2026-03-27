@@ -28,6 +28,19 @@ struct SettingsView: View {
                     }
                 }
 
+                // About
+                Section("關於") {
+                    Link(destination: URL(string: "https://z5702god.github.io/dw/")!) {
+                        HStack {
+                            Text("隱私權政策")
+                            Spacer()
+                            Image(systemName: "arrow.up.right")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                }
+
                 // Delete account
                 Section {
                     Button("刪除帳號") {
