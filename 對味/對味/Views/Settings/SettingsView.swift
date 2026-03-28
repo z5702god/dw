@@ -30,13 +30,15 @@ struct SettingsView: View {
 
                 // About
                 Section("關於") {
-                    Link(destination: URL(string: "https://z5702god.github.io/dw/")!) {
-                        HStack {
-                            Text("隱私權政策")
-                            Spacer()
-                            Image(systemName: "arrow.up.right")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
+                    if let url = URL(string: "https://z5702god.github.io/dw/") {
+                        Link(destination: url) {
+                            HStack {
+                                Text("隱私權政策")
+                                Spacer()
+                                Image(systemName: "arrow.up.right")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
                         }
                     }
                 }

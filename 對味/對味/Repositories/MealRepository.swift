@@ -11,7 +11,14 @@ final class MealRepository {
         startListening()
     }
 
-    private func startListening() {
+    func stopListening() {
+        listener?.remove()
+        listener = nil
+        meals = []
+    }
+
+    func startListening() {
+        guard listener == nil else { return }
         listener = FirebaseConfig.mealsCollection
             .order(by: "createdAt", descending: true)
             .addSnapshotListener { [weak self] snapshot, error in

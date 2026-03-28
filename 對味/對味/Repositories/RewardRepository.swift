@@ -11,7 +11,14 @@ final class RewardRepository {
         startListening()
     }
 
-    private func startListening() {
+    func stopListening() {
+        listener?.remove()
+        listener = nil
+        rewards = []
+    }
+
+    func startListening() {
+        guard listener == nil else { return }
         listener = FirebaseConfig.rewardsCollection
             .order(by: "createdAt", descending: false)
             .addSnapshotListener { [weak self] snapshot, error in

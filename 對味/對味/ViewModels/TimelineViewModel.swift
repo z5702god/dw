@@ -23,7 +23,7 @@ final class TimelineViewModel {
             calendar.startOfDay(for: meal.createdAt ?? .distantPast)
         }
         return grouped.keys.sorted(by: >).map { date in
-            MealGroup(id: date, title: dateTitle(for: date), meals: grouped[date]!)
+            MealGroup(id: date, title: dateTitle(for: date), meals: grouped[date] ?? [])
         }
     }
 

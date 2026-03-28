@@ -23,6 +23,7 @@ final class AuthViewModel {
 
         do {
             try await authRepo.signIn(email: email, password: password)
+            self.password = ""
         } catch {
             errorMessage = "登入失敗：\(error.localizedDescription)"
         }

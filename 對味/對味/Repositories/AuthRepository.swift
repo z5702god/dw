@@ -17,11 +17,15 @@ final class AuthRepository {
             self?.currentUser = user
             if let uid = user?.uid {
                 self?.listenToUserDocument(uid: uid)
+                MealRepository.shared.startListening()
+                RewardRepository.shared.startListening()
             } else {
                 self?.userListener?.remove()
                 self?.partnerListener?.remove()
                 self?.appUser = nil
                 self?.partnerUser = nil
+                MealRepository.shared.stopListening()
+                RewardRepository.shared.stopListening()
             }
         }
     }
@@ -35,9 +39,21 @@ final class AuthRepository {
     }
 
     func deleteAccount() async throws {
-        guard let uid = currentUser?.uid else { return }
+        guard let uid = currentUser?.uid,
+              let coupleId = appUser?.coupleId else { return }
+
+        let db = Firestore.firestore()
+        let mealsRef = db.collection("couples").document(coupleId).collection("meals")
+
+        // 刪除該使用者的所有餐記錄
+        let snapshot = try await mealsRef.whereField("userId", isEqualTo: uid).getDocuments()
+        for doc in snapshot.documents {
+            try await doc.reference.delete()
+        }
+
         // 刪除 Firestore 使用者文件
         try await FirebaseConfig.userDocument(uid).delete()
+
         // 刪除 Firebase Auth 帳號（auth state listener 會自動清理）
         try await Auth.auth().currentUser?.delete()
     }
@@ -117,10 +133,17 @@ final class AuthRepository {
             ?? firebaseUser.email?.components(separatedBy: "@").first
             ?? "User"
         let role = Self.inferRole(for: uid)
+        let coupleId: String
+        switch uid {
+        case "cdQV8F8j9NYyfI1Y4kKNV1hWrPB2", "M0143zxobBXxZ6vAAgX6jq8ll1g2":
+            coupleId = "couple_001"
+        default:
+            coupleId = "couple_test"
+        }
         let newUser = AppUser(
             email: firebaseUser.email ?? "",
             displayName: displayName,
-            coupleId: "couple_001",
+            coupleId: coupleId,
             totalPoints: 0,
             roleRawValue: role
         )

@@ -23,7 +23,7 @@ final class PointsService {
         // 檢查今天是否已經有晚餐紀錄（防止重複給點）
         let calendar = Calendar.current
         let startOfDay = calendar.startOfDay(for: Date())
-        let endOfDay = calendar.date(byAdding: .day, value: 1, to: startOfDay)!
+        guard let endOfDay = calendar.date(byAdding: .day, value: 1, to: startOfDay) else { return false }
 
         let snapshot = try await FirebaseConfig.mealsCollection
             .whereField("userId", isEqualTo: userId)

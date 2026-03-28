@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>現有 CelebrationView 動畫模擬</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+    overflow: hidden;
+  }
+
+  .container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    position: relative;
+  }
+
+  /* Glow rings */
+  .glow-outer, .glow-inner {
+    position: absolute;
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.8);
+  }
+
+  .glow-outer {
+    width: 140px;
+    height: 140px;
+    background: rgba(255, 149, 0, 0.15);
+    animation: glowOuter 1s ease-in-out infinite alternate;
+  }
+
+  .glow-inner {
+    width: 110px;
+    height: 110px;
+    background: rgba(255, 149, 0, 0.1);
+    animation: glowInner 1s ease-in-out infinite alternate;
+  }
+
+  @keyframes glowOuter {
+    from { transform: translate(-50%, -50%) scale(0.8); opacity: 0.6; }
+    to   { transform: translate(-50%, -50%) scale(1.3); opacity: 0; }
+  }
+
+  @keyframes glowInner {
+    from { transform: translate(-50%, -50%) scale(0.9); opacity: 0.4; }
+    to   { transform: translate(-50%, -50%) scale(1.15); opacity: 0.2; }
+  }
+
+  /* Star icon */
+  .star-wrap {
+    position: relative;
+    width: 140px;
+    height: 140px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .star {
+    font-size: 80px;
+    color: #FF9500;
+    filter: drop-shadow(0 0 8px rgba(255, 149, 0, 0.4));
+    animation: starBounce 0.5s cubic-bezier(0.5, 1.8, 0.5, 1) forwards;
+    opacity: 0;
+  }
+
+  @keyframes starBounce {
+    0%   { transform: scale(0.3); opacity: 0; }
+    60%  { transform: scale(1.15); opacity: 1; }
+    80%  { transform: scale(0.95); opacity: 1; }
+    100% { transform: scale(1.0); opacity: 1; }
+  }
+
+  /* +1 text */
+  .plus-one {
+    font-size: 40px;
+    font-weight: 900;
+    color: #FF9500;
+    font-family: -apple-system, 'SF Pro Rounded', sans-serif;
+    animation: plusBounce 0.5s cubic-bezier(0.5, 1.8, 0.5, 1) forwards;
+    opacity: 0;
+  }
+
+  @keyframes plusBounce {
+    0%   { transform: scale(0.1); opacity: 0; }
+    60%  { transform: scale(1.1); opacity: 1; }
+    100% { transform: scale(1.0); opacity: 1; }
+  }
+
+  /* Subtitle */
+  .subtitle {
+    font-size: 18px;
+    color: #8e8e93;
+    animation: fadeUp 0.4s ease-out 0.3s forwards;
+    opacity: 0;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Confetti */
+  .confetti {
+    position: fixed;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    opacity: 0;
+    animation: confettiBurst 1.2s ease-out 0.2s forwards;
+  }
+
+  @keyframes confettiBurst {
+    0%   { opacity: 1; transform: translate(0, 0) scale(1); }
+    100% { opacity: 0; transform: var(--end-pos) scale(0.3); }
+  }
+
+  /* Replay button */
+  .replay {
+    position: fixed;
+    bottom: 40px;
+    padding: 12px 28px;
+    background: #FF9500;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: -apple-system, sans-serif;
+    opacity: 0;
+    animation: fadeIn 0.3s ease 2.5s forwards;
+  }
+
+  .replay:hover { opacity: 0.9 !important; }
+
+  @keyframes fadeIn {
+    to { opacity: 1; }
+  }
+
+  /* Auto dismiss overlay */
+  .auto-dismiss {
+    position: fixed;
+    bottom: 80px;
+    font-size: 13px;
+    color: #aaa;
+    opacity: 0;
+    animation: fadeIn 0.3s ease 1s forwards;
+  }
+
+  /* Info label */
+  .info {
+    position: fixed;
+    top: 20px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 14px;
+    color: #aaa;
+    font-weight: 500;
+  }
+</style>
+</head>
+<body>
+
+<div class="info">現有 CelebrationView 動畫模擬（fullScreenCover，2秒後自動關閉）</div>
+
+<div class="container">
+  <div class="star-wrap">
+    <div class="glow-outer"></div>
+    <div class="glow-inner"></div>
+    <div class="star">⭐</div>
+  </div>
+  <div class="plus-one">+1</div>
+  <div class="subtitle">晚餐準時記錄！</div>
+</div>
+
+<div class="auto-dismiss">2 秒後自動關閉</div>
+<button class="replay" onclick="replay()">重播動畫</button>
+
+<script>
+  const colors = ['#FF9500', '#FF6B00', '#FFD60A', '#FF375F', '#64D2B1', '#FF3B30'];
+
+  function createConfetti() {
+    document.querySelectorAll('.confetti').forEach(el => el.remove());
+    for (let i = 0; i < 20; i++) {
+      const dot = document.createElement('div');
+      dot.className = 'confetti';
+      dot.style.background = colors[i % colors.length];
+      dot.style.width = (5 + Math.random() * 5) + 'px';
+      dot.style.height = dot.style.width;
+
+      const angle = (i * 18) * Math.PI / 180;
+      const dist = 120 + Math.random() * 100;
+      const x = Math.cos(angle) * dist;
+      const y = Math.sin(angle) * dist + 60;
+      dot.style.setProperty('--end-pos', `translate(${x}px, ${y}px)`);
+
+      dot.style.top = '50%';
+      dot.style.left = '50%';
+      dot.style.animationDelay = (0.2 + Math.random() * 0.15) + 's';
+      dot.style.animationDuration = (0.8 + Math.random() * 0.6) + 's';
+
+      document.body.appendChild(dot);
+    }
+  }
+
+  function replay() {
+    // Reset all animations
+    const container = document.querySelector('.container');
+    const clone = container.cloneNode(true);
+    container.parentNode.replaceChild(clone, container);
+    createConfetti();
+  }
+
+  createConfetti();
+</script>
+</body>
+</html>

@@ -131,7 +131,8 @@ final class MealFormViewModel {
                 photoURLs: photoURLs,
                 latitude: latitude,
                 longitude: longitude,
-                city: city
+                city: city,
+                address: address
             )
 
             try await mealRepo.addMeal(meal)
