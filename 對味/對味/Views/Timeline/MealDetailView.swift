@@ -10,6 +10,8 @@ struct MealDetailView: View {
     private let mealRepo = MealRepository.shared
     private let authRepo = AuthRepository.shared
 
+    private var isOwnMeal: Bool { meal.userId == authRepo.currentUserId }
+
     var body: some View {
         List {
             // Photos
@@ -116,7 +118,7 @@ struct MealDetailView: View {
 
             // Partner review display
             if let partnerReview = meal.partnerReview, !partnerReview.isEmpty {
-                Section("對方的心得") {
+                Section(isOwnMeal ? "另一半的悄悄話 💌" : "我的悄悄話 💌") {
                     VStack(alignment: .leading, spacing: 4) {
                         Text(partnerReview)
                             .font(.body)
@@ -130,9 +132,9 @@ struct MealDetailView: View {
                 }
             }
 
-            // Show submitted review optimistically
-            if submitted {
-                Section("對方的心得") {
+            // Show submitted review optimistically (only before server syncs back)
+            if submitted && (meal.partnerReview == nil || meal.partnerReview?.isEmpty == true) {
+                Section("我的悄悄話 💌") {
                     Text(partnerReviewText)
                         .font(.body)
                         .lineSpacing(4)
@@ -140,8 +142,8 @@ struct MealDetailView: View {
             }
 
             // Add review input if this is partner's meal and no review yet
-            if meal.userId != authRepo.currentUserId && !submitted && (meal.partnerReview == nil || meal.partnerReview?.isEmpty == true) {
-                Section("留下你的心得") {
+            if !isOwnMeal && !submitted && (meal.partnerReview == nil || meal.partnerReview?.isEmpty == true) {
+                Section("留一句悄悄話給他 💕") {
                     HStack {
                         TextField("寫點什麼...", text: $partnerReviewText)
                         Button("送出") {

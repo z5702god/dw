@@ -43,7 +43,7 @@ final class RewardRepository {
     }
 
     var availableRewards: [Reward] {
-        rewards.filter { $0.status == .available }
+        rewards.filter { $0.status == .available }.sorted { $0.pointsCost < $1.pointsCost }
     }
 
     var redeemedRewards: [Reward] {

@@ -135,10 +135,10 @@ struct FoodMapView: View {
 
         if viewModel.filteredMeals.isEmpty {
             VStack(spacing: 8) {
-                Image("EmptyStateIllustration")
+                Image("MapEmptyIllustration")
                     .resizable()
                     .scaledToFit()
-                    .frame(height: 80)
+                    .frame(maxWidth: .infinity)
                 Text("一起去探索新餐廳吧")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)

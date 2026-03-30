@@ -38,7 +38,7 @@ struct TimelineView: View {
                         Image("EmptyStateIllustration")
                             .resizable()
                             .scaledToFit()
-                            .frame(height: 200)
+                            .frame(maxWidth: .infinity)
 
                         Text("還沒有回味")
                             .font(.headline)
