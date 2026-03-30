@@ -8,6 +8,7 @@ final class MealFormViewModel {
     var name = ""
     var review = ""
     var rating: MealRating = .recommended
+    var mood: MealMood?
     var selectedPhotos: [PhotosPickerItem] = []
     var loadedImages: [UIImage] = []
     var isLoading = false
@@ -132,7 +133,8 @@ final class MealFormViewModel {
                 latitude: latitude,
                 longitude: longitude,
                 city: city,
-                address: address
+                address: address,
+                mood: mood
             )
 
             try await mealRepo.addMeal(meal)

@@ -3,6 +3,12 @@ import Kingfisher
 
 struct MealDetailView: View {
     let meal: Meal
+    @State private var partnerReviewText = ""
+    @State private var isSubmitting = false
+    @State private var submitted = false
+
+    private let mealRepo = MealRepository.shared
+    private let authRepo = AuthRepository.shared
 
     var body: some View {
         List {
@@ -61,6 +67,16 @@ struct MealDetailView: View {
 
                     // Metadata row
                     HStack(spacing: 4) {
+                        // Mood
+                        if let mood = meal.mood {
+                            Text(mood.emoji + " " + mood.displayName)
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                                .accessibilityLabel(mood.displayName)
+                            Text("·")
+                                .foregroundStyle(.secondary)
+                        }
+
                         // Meal slot
                         Image(systemName: meal.mealSlot.icon)
                             .font(.caption)
@@ -96,6 +112,50 @@ struct MealDetailView: View {
                 Text(meal.review)
                     .font(.body)
                     .lineSpacing(4)
+            }
+
+            // Partner review display
+            if let partnerReview = meal.partnerReview, !partnerReview.isEmpty {
+                Section("對方的心得") {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(partnerReview)
+                            .font(.body)
+                            .lineSpacing(4)
+                        if let reviewedAt = meal.partnerReviewedAt {
+                            Text(reviewedAt.formatted(.dateTime.year().month().day()))
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                }
+            }
+
+            // Show submitted review optimistically
+            if submitted {
+                Section("對方的心得") {
+                    Text(partnerReviewText)
+                        .font(.body)
+                        .lineSpacing(4)
+                }
+            }
+
+            // Add review input if this is partner's meal and no review yet
+            if meal.userId != authRepo.currentUserId && !submitted && (meal.partnerReview == nil || meal.partnerReview?.isEmpty == true) {
+                Section("留下你的心得") {
+                    HStack {
+                        TextField("寫點什麼...", text: $partnerReviewText)
+                        Button("送出") {
+                            Task {
+                                guard let id = meal.id else { return }
+                                isSubmitting = true
+                                try? await mealRepo.addPartnerReview(mealId: id, review: partnerReviewText)
+                                isSubmitting = false
+                                submitted = true
+                            }
+                        }
+                        .disabled(partnerReviewText.isEmpty || isSubmitting)
+                    }
+                }
             }
         }
         .listRowSeparatorTint(Color(.separator))

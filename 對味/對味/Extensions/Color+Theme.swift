@@ -4,6 +4,7 @@ import SwiftUI
 extension Color {
     static let appPrimary = Color(hex: "FF9500")
     static let ratingOk = Color(hex: "FF9500")
+    static let wishlistGold = Color(hex: "FFB800")
 }
 
 // MARK: - Semantic Aliases (for cleaner call sites)
@@ -23,6 +24,7 @@ extension ShapeStyle where Self == Color {
     static var ratingRecommended: Color { Color.ratingRecommended }
     static var ratingOk: Color { Color.ratingOk }
     static var ratingBad: Color { Color.ratingBad }
+    static var wishlistGold: Color { Color.wishlistGold }
 }
 
 // MARK: - Hex Initializer

@@ -4,6 +4,7 @@ struct TimelineView: View {
     @State private var viewModel = TimelineViewModel()
     @State private var showingAddMeal = false
     @State private var showingSettings = false
+    @State private var showPhotoWall = false
 
     var body: some View {
         NavigationStack {
@@ -86,12 +87,21 @@ struct TimelineView: View {
                     .tint(.appPrimary)
                 }
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        showingAddMeal = true
-                    } label: {
-                        Image(systemName: "plus")
+                    HStack(spacing: 12) {
+                        Button {
+                            showPhotoWall = true
+                        } label: {
+                            Image(systemName: "photo.on.rectangle")
+                        }
+                        .tint(.appPrimary)
+
+                        Button {
+                            showingAddMeal = true
+                        } label: {
+                            Image(systemName: "plus")
+                        }
+                        .tint(.appPrimary)
                     }
-                    .tint(.appPrimary)
                 }
             }
             .sheet(isPresented: $showingAddMeal) {
@@ -99,6 +109,9 @@ struct TimelineView: View {
             }
             .sheet(isPresented: $showingSettings) {
                 SettingsView()
+            }
+            .sheet(isPresented: $showPhotoWall) {
+                PhotoWallView()
             }
             .sensoryFeedback(.selection, trigger: viewModel.selectedRating)
         }

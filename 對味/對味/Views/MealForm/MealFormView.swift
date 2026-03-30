@@ -106,6 +106,35 @@ struct MealFormView: View {
                     .pickerStyle(.segmented)
                 }
 
+                // 心情
+                Section("今天的心情") {
+                    HStack(spacing: 12) {
+                        ForEach(MealMood.allCases, id: \.self) { mood in
+                            Button {
+                                if viewModel.mood == mood {
+                                    viewModel.mood = nil
+                                } else {
+                                    viewModel.mood = mood
+                                }
+                            } label: {
+                                VStack(spacing: 4) {
+                                    Text(mood.emoji)
+                                        .font(.title2)
+                                    Text(mood.displayName)
+                                        .font(.caption2)
+                                        .foregroundStyle(viewModel.mood == mood ? .appPrimary : .secondary)
+                                }
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 8)
+                                .background(viewModel.mood == mood ? Color.appPrimary.opacity(0.1) : Color.clear)
+                                .clipShape(RoundedRectangle(cornerRadius: 10))
+                            }
+                            .buttonStyle(.plain)
+                            .accessibilityLabel(mood.displayName)
+                        }
+                    }
+                }
+
                 // 照片
                 Section {
                     PhotosPicker(

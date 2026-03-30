@@ -49,4 +49,11 @@ final class MealRepository {
     func meals(inCity city: City) -> [Meal] {
         meals.filter { $0.city == city }
     }
+
+    func addPartnerReview(mealId: String, review: String) async throws {
+        try await FirebaseConfig.mealsCollection.document(mealId).updateData([
+            "partnerReview": review,
+            "partnerReviewedAt": FieldValue.serverTimestamp()
+        ])
+    }
 }

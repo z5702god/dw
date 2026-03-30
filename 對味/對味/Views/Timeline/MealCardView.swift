@@ -43,6 +43,10 @@ struct MealCardView: View {
                     .lineLimit(2)
 
                 HStack(spacing: 4) {
+                    if let mood = meal.mood {
+                        Text(mood.emoji)
+                            .accessibilityLabel(mood.displayName)
+                    }
                     Image(systemName: meal.mealSlot.icon)
                     Text(meal.mealSlot.displayName)
                     if let city = meal.city {

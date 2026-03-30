@@ -65,12 +65,13 @@ final class PointsService {
         return true
     }
 
-    func redeemReward(rewardId: String, cost: Int) async throws {
+    func redeemReward(reward: Reward) async throws {
         guard let userId = authRepo.currentUserId else {
             throw PointsError.notLoggedIn
         }
 
         let userRef = FirebaseConfig.userDocument(userId)
+        let cost = reward.pointsCost
 
         // 使用 Firestore Transaction 確保原子性，避免 race condition
         try await db.runTransaction { transaction, errorPointer in
@@ -102,8 +103,8 @@ final class PointsService {
             return nil
         }
 
-        // Transaction 成功後才標記獎勵為已兌換
-        try await RewardRepository.shared.redeemReward(id: rewardId, redeemedBy: userId)
+        // Transaction 成功後建立兌換紀錄（原獎勵保持 available）
+        try await RewardRepository.shared.redeemReward(reward: reward, redeemedBy: userId)
     }
 }
 

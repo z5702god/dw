@@ -39,11 +39,10 @@ final class RewardViewModel {
 
     /// Kathy redeems a reward
     func redeemReward(_ reward: Reward) async {
-        guard let rewardId = reward.id else { return }
         isLoading = true
         errorMessage = nil
         do {
-            try await pointsService.redeemReward(rewardId: rewardId, cost: reward.pointsCost)
+            try await pointsService.redeemReward(reward: reward)
         } catch {
             errorMessage = error.localizedDescription
         }

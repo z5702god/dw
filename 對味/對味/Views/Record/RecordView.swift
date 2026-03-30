@@ -2,9 +2,14 @@ import SwiftUI
 
 struct RecordView: View {
     @State private var showingMealForm = false
+    @State private var showMilestone = false
+    @State private var milestoneCount = 0
+    @State private var lastKnownMealCount = 0
 
     private let mealRepo = MealRepository.shared
     private let authRepo = AuthRepository.shared
+
+    private static let milestoneThresholds: Set<Int> = [1, 10, 50, 100]
 
     // MARK: - Computed Properties
 
@@ -128,6 +133,13 @@ struct RecordView: View {
                             )
                     }
                 }
+
+                // MARK: Section 4 — Monthly recap
+                Section("本月回顧") {
+                    MonthlyRecapView()
+                        .listRowInsets(EdgeInsets())
+                        .listRowBackground(Color.clear)
+                }
             }
             .listRowSeparatorTint(Color(.separator))
             .listStyle(.insetGrouped)
@@ -149,6 +161,20 @@ struct RecordView: View {
                 MealFormView()
             }
             .sensoryFeedback(.success, trigger: showingMealForm)
+            .onChange(of: mealRepo.meals.count) { oldCount, newCount in
+                if newCount > oldCount && Self.milestoneThresholds.contains(newCount) {
+                    milestoneCount = newCount
+                    showMilestone = true
+                }
+            }
+            .overlay {
+                if showMilestone {
+                    MilestoneView(mealCount: milestoneCount) {
+                        withAnimation { showMilestone = false }
+                    }
+                    .transition(.opacity)
+                }
+            }
         }
     }
 

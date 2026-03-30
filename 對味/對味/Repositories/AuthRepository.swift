@@ -19,6 +19,7 @@ final class AuthRepository {
                 self?.listenToUserDocument(uid: uid)
                 MealRepository.shared.startListening()
                 RewardRepository.shared.startListening()
+                WishlistRepository.shared.startListening()
             } else {
                 self?.userListener?.remove()
                 self?.partnerListener?.remove()
@@ -26,6 +27,7 @@ final class AuthRepository {
                 self?.partnerUser = nil
                 MealRepository.shared.stopListening()
                 RewardRepository.shared.stopListening()
+                WishlistRepository.shared.stopListening()
             }
         }
     }

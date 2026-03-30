@@ -45,6 +45,32 @@ enum MealSlot: String, Codable, CaseIterable {
     }
 }
 
+// MARK: - Meal Mood (心情標籤)
+enum MealMood: String, Codable, CaseIterable {
+    case happy = "happy"
+    case date = "date"
+    case missing = "missing"
+    case daily = "daily"
+
+    var displayName: String {
+        switch self {
+        case .happy: return "開心"
+        case .date: return "約會"
+        case .missing: return "想念"
+        case .daily: return "日常"
+        }
+    }
+
+    var emoji: String {
+        switch self {
+        case .happy: return "😊"
+        case .date: return "💕"
+        case .missing: return "🥺"
+        case .daily: return "🍽️"
+        }
+    }
+}
+
 // MARK: - Meal Model
 struct Meal: Codable, Identifiable {
     @DocumentID var id: String?
@@ -60,6 +86,9 @@ struct Meal: Codable, Identifiable {
     var longitude: Double?
     var city: City?
     var address: String?
+    var mood: MealMood?            // V1.2: 心情標籤
+    var partnerReview: String?     // V1.2: 對方的心得
+    var partnerReviewedAt: Date?   // V1.2: 對方留心得的時間
     @ServerTimestamp var createdAt: Date?
 
     var coordinate: CLLocationCoordinate2D? {
@@ -91,11 +120,14 @@ struct Meal: Codable, Identifiable {
         longitude = try container.decodeIfPresent(Double.self, forKey: .longitude)
         city = try container.decodeIfPresent(City.self, forKey: .city)
         address = try container.decodeIfPresent(String.self, forKey: .address)
+        mood = try container.decodeIfPresent(MealMood.self, forKey: .mood)
+        partnerReview = try container.decodeIfPresent(String.self, forKey: .partnerReview)
+        partnerReviewedAt = try container.decodeIfPresent(Date.self, forKey: .partnerReviewedAt)
         _createdAt = try container.decode(ServerTimestamp<Date>.self, forKey: .createdAt)
     }
 
     // 程式碼建立用
-    init(userId: String, mealPlace: MealPlace, mealSlot: MealSlot, restaurantName: String? = nil, foodName: String? = nil, review: String, rating: MealRating, photoURLs: [String], latitude: Double? = nil, longitude: Double? = nil, city: City? = nil, address: String? = nil) {
+    init(userId: String, mealPlace: MealPlace, mealSlot: MealSlot, restaurantName: String? = nil, foodName: String? = nil, review: String, rating: MealRating, photoURLs: [String], latitude: Double? = nil, longitude: Double? = nil, city: City? = nil, address: String? = nil, mood: MealMood? = nil) {
         self.userId = userId
         self.mealPlace = mealPlace
         self.mealSlot = mealSlot
@@ -108,6 +140,7 @@ struct Meal: Codable, Identifiable {
         self.longitude = longitude
         self.city = city
         self.address = address
+        self.mood = mood
     }
 }
 

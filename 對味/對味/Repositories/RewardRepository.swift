@@ -58,12 +58,18 @@ final class RewardRepository {
         try await FirebaseConfig.rewardsCollection.addDocument(from: reward)
     }
 
-    func redeemReward(id: String, redeemedBy: String) async throws {
-        try await FirebaseConfig.rewardsCollection.document(id).updateData([
+    /// 建立一筆兌換紀錄（原獎勵保持 available，可重複兌換）
+    func redeemReward(reward: Reward, redeemedBy: String) async throws {
+        let data: [String: Any] = [
+            "title": reward.title,
+            "pointsCost": reward.pointsCost,
+            "createdBy": reward.createdBy,
             "status": RewardStatus.redeemed.rawValue,
+            "redeemedBy": redeemedBy,
             "redeemedAt": FieldValue.serverTimestamp(),
-            "redeemedBy": redeemedBy
-        ])
+            "createdAt": FieldValue.serverTimestamp()
+        ]
+        try await FirebaseConfig.rewardsCollection.addDocument(data: data)
     }
 
     func completeReward(id: String, completedBy: String) async throws {
