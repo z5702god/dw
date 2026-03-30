@@ -12,13 +12,28 @@ final class PointsService {
     /// 晚餐在 20:00 前記錄可獲得 1 點（僅 pointsEarner 可獲得點數）
     /// 同一天只能獲得一次晚餐點數
     func awardPointIfEligible(mealSlot: MealSlot, userId: String) async throws -> Bool {
-        // 只有 pointsEarner（Kathy）可以獲得點數
-        guard authRepo.appUser?.isKathy == true else { return false }
+        // 只有 pointsEarner（俐瑤）可以獲得點數
+        guard authRepo.appUser?.isKathy == true else {
+            #if DEBUG
+            print("[PointsService] Not pointsEarner, isKathy=\(authRepo.appUser?.isKathy ?? false), role=\(authRepo.appUser?.role.rawValue ?? "nil")")
+            #endif
+            return false
+        }
 
-        guard mealSlot == .dinner else { return false }
+        guard mealSlot == .dinner else {
+            #if DEBUG
+            print("[PointsService] Not dinner, mealSlot=\(mealSlot.rawValue)")
+            #endif
+            return false
+        }
 
         let hour = Calendar.current.component(.hour, from: Date())
-        guard hour < 20 else { return false }
+        guard hour >= 17 && hour < 20 else {
+            #if DEBUG
+            print("[PointsService] After 8pm, hour=\(hour)")
+            #endif
+            return false
+        }
 
         // 檢查今天是否已經有晚餐紀錄（防止重複給點）
         let calendar = Calendar.current
@@ -33,12 +48,20 @@ final class PointsService {
             .getDocuments()
 
         // 如果已經有超過 1 筆晚餐紀錄（包含剛存的這筆），代表之前已給過點數
-        guard snapshot.documents.count <= 1 else { return false }
+        guard snapshot.documents.count <= 1 else {
+            #if DEBUG
+            print("[PointsService] Duplicate dinner, count=\(snapshot.documents.count)")
+            #endif
+            return false
+        }
 
         try await FirebaseConfig.userDocument(userId).updateData([
             "totalPoints": FieldValue.increment(Int64(1))
         ])
 
+        #if DEBUG
+        print("[PointsService] ✅ Awarded 1 point to \(userId)")
+        #endif
         return true
     }
 
