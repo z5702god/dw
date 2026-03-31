@@ -28,7 +28,7 @@ struct FoodMapView: View {
                         Menu {
                             ForEach(City.allCases, id: \.self) { city in
                                 Button {
-                                    viewModel.selectedCity = city
+                                    viewModel.selectCity(city)
                                 } label: {
                                     if city == viewModel.selectedCity {
                                         Label(city.displayName, systemImage: "checkmark")

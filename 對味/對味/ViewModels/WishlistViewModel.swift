@@ -17,6 +17,7 @@ final class WishlistViewModel {
     var city: City?
 
     let locationSearch = LocationSearchService()
+    private let locationManager = LocationManager.shared
 
     private let repo = WishlistRepository.shared
     private let authRepo = AuthRepository.shared
@@ -24,7 +25,7 @@ final class WishlistViewModel {
     /// 進入搜尋模式，用當前文字搜尋
     func enterSearchMode() {
         isSearchMode = true
-        Task { await locationSearch.search(query: searchQuery) }
+        Task { await locationSearch.search(query: searchQuery, near: locationManager.userLocation) }
     }
 
     /// 退出搜尋模式
@@ -36,7 +37,7 @@ final class WishlistViewModel {
     /// 搜尋模式中輸入時搜尋
     func performSearch() async {
         guard isSearchMode else { return }
-        await locationSearch.search(query: searchQuery)
+        await locationSearch.search(query: searchQuery, near: locationManager.userLocation)
     }
 
     /// 選擇搜尋結果

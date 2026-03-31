@@ -25,6 +25,7 @@ final class MealFormViewModel {
     var address: String?
 
     let locationSearch = LocationSearchService()
+    private let locationManager = LocationManager.shared
 
     private let mealRepo = MealRepository.shared
     private let storageRepo = StorageRepository.shared
@@ -51,7 +52,7 @@ final class MealFormViewModel {
     /// 進入搜尋模式，用當前文字搜尋
     func enterSearchMode() {
         isSearchMode = true
-        Task { await locationSearch.search(query: searchQuery) }
+        Task { await locationSearch.search(query: searchQuery, near: locationManager.userLocation) }
     }
 
     /// 退出搜尋模式
@@ -63,7 +64,7 @@ final class MealFormViewModel {
     /// 搜尋模式中輸入時搜尋
     func performSearch() async {
         guard isSearchMode else { return }
-        await locationSearch.search(query: searchQuery)
+        await locationSearch.search(query: searchQuery, near: locationManager.userLocation)
     }
 
     /// 選擇搜尋結果
