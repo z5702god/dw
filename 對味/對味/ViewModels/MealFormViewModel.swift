@@ -19,6 +19,7 @@ final class MealFormViewModel {
     var searchQuery = ""
     var isSearchMode = false
     var selectedLocation: MKMapItem?
+    var hasManualLocation = false
     var latitude: Double?
     var longitude: Double?
     var city: City?
@@ -34,7 +35,11 @@ final class MealFormViewModel {
 
     // 有選地點 = 外食，沒選 = 在家
     var mealPlace: MealPlace {
-        selectedLocation != nil ? .restaurant : .home
+        (selectedLocation != nil || hasManualLocation) ? .restaurant : .home
+    }
+
+    var hasLocation: Bool {
+        selectedLocation != nil || hasManualLocation
     }
 
     // 自動餐別
@@ -87,9 +92,28 @@ final class MealFormViewModel {
         searchQuery = ""
     }
 
+    /// 手動在地圖上選擇位置
+    func selectManualLocation(coordinate: CLLocationCoordinate2D, address: String?, city: City?) {
+        hasManualLocation = true
+        latitude = coordinate.latitude
+        longitude = coordinate.longitude
+        self.address = address
+        self.city = city
+
+        // 如果用戶還沒輸入名稱，保持 searchQuery 作為名稱
+        if name.isEmpty && !searchQuery.isEmpty {
+            name = searchQuery
+        }
+
+        isSearchMode = false
+        locationSearch.clear()
+        searchQuery = ""
+    }
+
     /// 清除選擇的地點（改為在家）
     func clearLocation() {
         selectedLocation = nil
+        hasManualLocation = false
         latitude = nil
         longitude = nil
         city = nil

@@ -7,14 +7,15 @@ struct MealFormView: View {
     @State private var viewModel = MealFormViewModel()
     @State private var showCelebration = false
     @State private var saveTrigger = false
+    @State private var showMapPicker = false
 
     var body: some View {
         NavigationStack {
             Form {
                 // 搜尋餐廳或直接輸入
                 Section {
-                    if let location = viewModel.selectedLocation {
-                        // 已選擇餐廳
+                    if viewModel.hasLocation {
+                        // 已選擇餐廳（搜尋或手動定位）
                         HStack {
                             VStack(alignment: .leading, spacing: 2) {
                                 Text(viewModel.name)
@@ -77,6 +78,17 @@ struct MealFormView: View {
                             }
                         }
 
+                        // 搜尋模式：顯示「在地圖上選擇位置」
+                        if viewModel.isSearchMode {
+                            Button {
+                                showMapPicker = true
+                            } label: {
+                                Label("在地圖上選擇位置", systemImage: "map")
+                                    .font(.subheadline)
+                                    .foregroundStyle(.appPrimary)
+                            }
+                        }
+
                         // 非搜尋模式 + 有輸入文字：顯示搜尋按鈕
                         if !viewModel.isSearchMode && !viewModel.searchQuery.isEmpty {
                             Button {
@@ -91,7 +103,7 @@ struct MealFormView: View {
                 } header: {
                     Text("吃了什麼？")
                 } footer: {
-                    if viewModel.selectedLocation == nil && viewModel.searchQuery.isEmpty {
+                    if !viewModel.hasLocation && viewModel.searchQuery.isEmpty {
                         Text("直接輸入記為在家用餐，想定位餐廳可點下方搜尋")
                     }
                 }
@@ -219,6 +231,11 @@ struct MealFormView: View {
                         ProgressView { Text("儲存中...").font(.subheadline) }
                             .controlSize(.large)
                     }
+                }
+            }
+            .sheet(isPresented: $showMapPicker) {
+                MapPinPickerView { coordinate, address, city in
+                    viewModel.selectManualLocation(coordinate: coordinate, address: address, city: city)
                 }
             }
             .fullScreenCover(isPresented: $showCelebration, onDismiss: {
