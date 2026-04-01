@@ -62,10 +62,9 @@ struct FoodMapView: View {
                             Button {
                                 showDreamList = true
                             } label: {
-                                Image("IconDreamRestaurant")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 28, height: 28)
+                                Image(systemName: "heart.fill")
+                                    .font(.subheadline)
+                                    .foregroundStyle(.pink)
                                     .padding(10)
                                     .background(.ultraThinMaterial)
                                     .clipShape(Circle())
