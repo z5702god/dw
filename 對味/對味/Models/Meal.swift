@@ -89,6 +89,8 @@ struct Meal: Codable, Identifiable {
     var mood: MealMood?            // V1.2: 心情標籤
     var partnerReview: String?     // V1.2: 對方的心得
     var partnerReviewedAt: Date?   // V1.2: 對方留心得的時間
+    var isTimelineEvent: Bool?     // V2: 味道時間軸標記
+    var timelineTag: TimelineTag?  // V2: 時間軸標籤
     @ServerTimestamp var createdAt: Date?
 
     var coordinate: CLLocationCoordinate2D? {
@@ -123,6 +125,8 @@ struct Meal: Codable, Identifiable {
         mood = try container.decodeIfPresent(MealMood.self, forKey: .mood)
         partnerReview = try container.decodeIfPresent(String.self, forKey: .partnerReview)
         partnerReviewedAt = try container.decodeIfPresent(Date.self, forKey: .partnerReviewedAt)
+        isTimelineEvent = try container.decodeIfPresent(Bool.self, forKey: .isTimelineEvent)
+        timelineTag = try container.decodeIfPresent(TimelineTag.self, forKey: .timelineTag)
         _createdAt = try container.decode(ServerTimestamp<Date>.self, forKey: .createdAt)
     }
 
@@ -141,6 +145,44 @@ struct Meal: Codable, Identifiable {
         self.city = city
         self.address = address
         self.mood = mood
+    }
+}
+
+// MARK: - Timeline Tag (味道時間軸)
+enum TimelineTag: String, Codable, CaseIterable {
+    case firstDate = "first_date"
+    case birthday = "birthday"
+    case anniversary = "anniversary"
+    case makeUp = "makeup"
+    case travel = "travel"
+    case milestone = "milestone"
+    case firstCook = "first_cook"
+    case special = "special"
+
+    var displayName: String {
+        switch self {
+        case .firstDate: return "第一次約會"
+        case .birthday: return "生日"
+        case .anniversary: return "紀念日"
+        case .makeUp: return "和好"
+        case .travel: return "旅行"
+        case .milestone: return "里程碑"
+        case .firstCook: return "第一次煮飯"
+        case .special: return "特別的"
+        }
+    }
+
+    var emoji: String {
+        switch self {
+        case .firstDate: return "💕"
+        case .birthday: return "🎂"
+        case .anniversary: return "💍"
+        case .makeUp: return "🌈"
+        case .travel: return "✈️"
+        case .milestone: return "⭐"
+        case .firstCook: return "👩‍🍳"
+        case .special: return "✨"
+        }
     }
 }
 

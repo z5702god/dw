@@ -6,11 +6,14 @@ struct MealDetailView: View {
     @State private var partnerReviewText = ""
     @State private var isSubmitting = false
     @State private var submitted = false
+    @State private var showTimelineTagPicker = false
+    @State private var isUpdatingTimeline = false
 
     private let mealRepo = MealRepository.shared
     private let authRepo = AuthRepository.shared
 
     private var isOwnMeal: Bool { meal.userId == authRepo.currentUserId }
+    private var isInTimeline: Bool { meal.isTimelineEvent == true }
 
     var body: some View {
         List {
@@ -159,6 +162,55 @@ struct MealDetailView: View {
                     }
                 }
             }
+
+            // MARK: - 味道時間軸
+            Section {
+                if isInTimeline {
+                    HStack {
+                        if let tag = meal.timelineTag {
+                            Label(tag.emoji + " " + tag.displayName, systemImage: "star.fill")
+                                .foregroundStyle(.appPrimary)
+                        } else {
+                            Label("已加入時間軸", systemImage: "star.fill")
+                                .foregroundStyle(.appPrimary)
+                        }
+                        Spacer()
+                        Button("移除") {
+                            guard let id = meal.id else { return }
+                            isUpdatingTimeline = true
+                            Task {
+                                try? await mealRepo.removeFromTimeline(mealId: id)
+                                isUpdatingTimeline = false
+                            }
+                        }
+                        .font(.subheadline)
+                        .foregroundStyle(.red)
+                        .disabled(isUpdatingTimeline)
+                    }
+                } else {
+                    Button {
+                        showTimelineTagPicker = true
+                    } label: {
+                        Label("加入味道時間軸", systemImage: "star")
+                    }
+                    .disabled(isUpdatingTimeline)
+                }
+            } header: {
+                Text("味道時間軸 ✨")
+            }
+        }
+        .confirmationDialog("選擇時間軸標籤", isPresented: $showTimelineTagPicker, titleVisibility: .visible) {
+            ForEach(TimelineTag.allCases, id: \.self) { tag in
+                Button("\(tag.emoji) \(tag.displayName)") {
+                    guard let id = meal.id else { return }
+                    isUpdatingTimeline = true
+                    Task {
+                        try? await mealRepo.addToTimeline(mealId: id, tag: tag)
+                        isUpdatingTimeline = false
+                    }
+                }
+            }
+            Button("取消", role: .cancel) {}
         }
         .listRowSeparatorTint(Color(.separator))
         .listStyle(.insetGrouped)

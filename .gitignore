@@ -41,3 +41,6 @@ Thumbs.db
 .vscode/
 *.swp
 *.swo
+
+# AI Config (contains API key)
+AIConfig.swift

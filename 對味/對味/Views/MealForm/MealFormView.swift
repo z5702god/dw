@@ -8,6 +8,7 @@ struct MealFormView: View {
     @State private var showCelebration = false
     @State private var saveTrigger = false
     @State private var showMapPicker = false
+    @State private var isAIGenerating = false
 
     var body: some View {
         NavigationStack {
@@ -188,6 +189,39 @@ struct MealFormView: View {
                                     .allowsHitTesting(false)
                             }
                         }
+
+                    if AIConfig.isAvailable {
+                        Button {
+                            Task {
+                                isAIGenerating = true
+                                let foodName = viewModel.name.isEmpty ? viewModel.searchQuery : viewModel.name
+                                if let result = await AIService.shared.generateReview(
+                                    name: foodName,
+                                    rating: viewModel.rating,
+                                    mood: viewModel.mood,
+                                    mealPlace: viewModel.mealPlace
+                                ) {
+                                    viewModel.review = result
+                                }
+                                isAIGenerating = false
+                            }
+                        } label: {
+                            HStack {
+                                if isAIGenerating {
+                                    ProgressView()
+                                        .controlSize(.small)
+                                    Text("AI 撰寫中...")
+                                        .font(.subheadline)
+                                } else {
+                                    Image(systemName: "sparkles")
+                                    Text("AI 幫我寫 ✨")
+                                        .font(.subheadline)
+                                }
+                            }
+                            .foregroundStyle(.appPrimary)
+                        }
+                        .disabled(isAIGenerating || (viewModel.name.isEmpty && viewModel.searchQuery.isEmpty))
+                    }
                 }
 
                 if let error = viewModel.errorMessage {

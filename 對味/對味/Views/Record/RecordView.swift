@@ -5,6 +5,7 @@ struct RecordView: View {
     @State private var showMilestone = false
     @State private var milestoneCount = 0
     @State private var lastKnownMealCount = 0
+    @State private var showArbitrator = false
 
     private let mealRepo = MealRepository.shared
     private let authRepo = AuthRepository.shared
@@ -33,6 +34,18 @@ struct RecordView: View {
             meal.userId != currentUserId &&
             calendar.isDateInToday(meal.createdAt ?? .distantPast)
         }
+    }
+
+    /// My meals that received a partner review recently (within 7 days)
+    private var recentPartnerReviews: [Meal] {
+        let sevenDaysAgo = Calendar.current.date(byAdding: .day, value: -7, to: Date()) ?? .distantPast
+        return mealRepo.meals.filter { meal in
+            meal.userId == currentUserId &&
+            meal.partnerReview != nil &&
+            meal.partnerReview?.isEmpty == false &&
+            (meal.partnerReviewedAt ?? .distantPast) > sevenDaysAgo
+        }
+        .sorted { ($0.partnerReviewedAt ?? .distantPast) > ($1.partnerReviewedAt ?? .distantPast) }
     }
 
     /// Dinner meal recorded today (if any)
@@ -87,6 +100,34 @@ struct RecordView: View {
                     }
                 }
 
+                // MARK: Section 1.5 — Partner review notifications
+                if !recentPartnerReviews.isEmpty {
+                    Section {
+                        ForEach(recentPartnerReviews.prefix(3)) { meal in
+                            NavigationLink(destination: MealDetailView(meal: meal)) {
+                                HStack(spacing: 10) {
+                                    Image(systemName: "bubble.left.fill")
+                                        .foregroundStyle(.appPrimary)
+                                        .font(.body)
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text("\(authRepo.partnerName) 對你的 \(meal.displayTitle) 留了心得")
+                                            .font(.subheadline)
+                                            .lineLimit(2)
+                                        if let review = meal.partnerReview {
+                                            Text(review)
+                                                .font(.caption)
+                                                .foregroundStyle(.secondary)
+                                                .lineLimit(1)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    } header: {
+                        Text("悄悄話 💬")
+                    }
+                }
+
                 // MARK: Section 2 — Today's records
                 Section("今天的紀錄") {
                     if myTodayMeals.isEmpty {
@@ -134,6 +175,32 @@ struct RecordView: View {
                     }
                 }
 
+                // MARK: Section 3.5 — 嘴饞告解室
+                Section {
+                    NavigationLink(destination: ConfessionView()) {
+                        HStack(spacing: 12) {
+                            Text("🍪")
+                                .font(.title2)
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("嘴饞告解室")
+                                    .font(.subheadline.weight(.semibold))
+                                Text("偷吃了什麼？快來告解吧")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                            Spacer()
+                            if ConfessionRepository.shared.pendingForMe.count > 0 {
+                                Text("\(ConfessionRepository.shared.pendingForMe.count)")
+                                    .font(.caption2.bold())
+                                    .foregroundStyle(.white)
+                                    .frame(width: 20, height: 20)
+                                    .background(Color.red)
+                                    .clipShape(Circle())
+                            }
+                        }
+                    }
+                }
+
                 // MARK: Section 4 — Monthly recap
                 Section("本月回顧") {
                     MonthlyRecapView()
@@ -148,6 +215,16 @@ struct RecordView: View {
             .animation(.default, value: myTodayMeals.count)
             .animation(.default, value: partnerTodayMeals.count)
             .toolbar {
+                if AIConfig.isAvailable {
+                    ToolbarItem(placement: .topBarLeading) {
+                        Button {
+                            showArbitrator = true
+                        } label: {
+                            Label("美食法庭", systemImage: "scalemass")
+                        }
+                        .tint(.appPrimary)
+                    }
+                }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
                         showingMealForm = true
@@ -159,6 +236,9 @@ struct RecordView: View {
             }
             .sheet(isPresented: $showingMealForm) {
                 MealFormView()
+            }
+            .sheet(isPresented: $showArbitrator) {
+                ArbitratorView()
             }
             .sensoryFeedback(.success, trigger: showingMealForm)
             .onChange(of: mealRepo.meals.count) { oldCount, newCount in

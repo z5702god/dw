@@ -19,6 +19,14 @@ enum FirebaseConfig {
         coupleDocument.collection("wishlist")
     }
 
+    static var confessionsCollection: CollectionReference {
+        coupleDocument.collection("confessions")
+    }
+
+    static var dreamCollection: CollectionReference {
+        coupleDocument.collection("dreams")
+    }
+
     static var usersCollection: CollectionReference {
         Firestore.firestore().collection("users")
     }

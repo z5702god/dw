@@ -5,6 +5,8 @@ struct TimelineView: View {
     @State private var showingAddMeal = false
     @State private var showingSettings = false
     @State private var showPhotoWall = false
+    @State private var showLandmine = false
+    @State private var showTasteTimeline = false
 
     var body: some View {
         NavigationStack {
@@ -89,6 +91,20 @@ struct TimelineView: View {
                 ToolbarItem(placement: .topBarTrailing) {
                     HStack(spacing: 12) {
                         Button {
+                            showLandmine = true
+                        } label: {
+                            Image(systemName: "bolt.trianglebadge.exclamationmark.fill")
+                        }
+                        .tint(.appPrimary)
+
+                        Button {
+                            showTasteTimeline = true
+                        } label: {
+                            Image(systemName: "star.fill")
+                        }
+                        .tint(.appPrimary)
+
+                        Button {
                             showPhotoWall = true
                         } label: {
                             Image(systemName: "photo.on.rectangle")
@@ -112,6 +128,12 @@ struct TimelineView: View {
             }
             .sheet(isPresented: $showPhotoWall) {
                 PhotoWallView()
+            }
+            .sheet(isPresented: $showLandmine) {
+                LandmineView()
+            }
+            .sheet(isPresented: $showTasteTimeline) {
+                TasteTimelineView()
             }
             .sensoryFeedback(.selection, trigger: viewModel.selectedRating)
         }

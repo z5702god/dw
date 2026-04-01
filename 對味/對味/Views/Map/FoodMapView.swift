@@ -9,6 +9,7 @@ struct FoodMapView: View {
     @State private var wishlistRepo = WishlistRepository.shared
     @State private var authRepo = AuthRepository.shared
     @State private var wishlistToDelete: WishlistItem?
+    @State private var showDreamList = false
 
     var body: some View {
         GeometryReader { geo in
@@ -58,6 +59,18 @@ struct FoodMapView: View {
                         HStack {
                             MapFilterView(selectedRating: $viewModel.selectedRating)
                             Spacer()
+                            Button {
+                                showDreamList = true
+                            } label: {
+                                Image(systemName: "heart.fill")
+                                    .font(.subheadline)
+                                    .foregroundStyle(.pink)
+                                    .padding(10)
+                                    .background(.ultraThinMaterial)
+                                    .clipShape(Circle())
+                                    .shadow(color: .black.opacity(0.1), radius: 6, y: 3)
+                            }
+                            .padding(.trailing, 12)
                         }
                     }
                     .padding(.top, 8)
@@ -101,6 +114,9 @@ struct FoodMapView: View {
         }
         .sheet(isPresented: $showAddWishlist) {
             AddWishlistItemView()
+        }
+        .sheet(isPresented: $showDreamList) {
+            DreamListView()
         }
         .alert("確定要刪除嗎？", isPresented: .init(get: { wishlistToDelete != nil }, set: { if !$0 { wishlistToDelete = nil } })) {
             Button("取消", role: .cancel) {

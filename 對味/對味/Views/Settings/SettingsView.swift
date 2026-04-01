@@ -28,6 +28,15 @@ struct SettingsView: View {
                     }
                 }
 
+                // 口味身分證
+                Section {
+                    NavigationLink {
+                        TasteProfileView()
+                    } label: {
+                        Label("口味身分證", systemImage: "person.text.rectangle")
+                    }
+                }
+
                 // About
                 Section("關於") {
                     if let url = URL(string: "https://z5702god.github.io/dw/") {

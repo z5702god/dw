@@ -50,6 +50,28 @@ final class MealRepository {
         meals.filter { $0.city == city }
     }
 
+    // MARK: - 味道時間軸
+
+    func addToTimeline(mealId: String, tag: TimelineTag) async throws {
+        try await FirebaseConfig.mealsCollection.document(mealId).updateData([
+            "isTimelineEvent": true,
+            "timelineTag": tag.rawValue
+        ])
+        #if DEBUG
+        print("[MealRepository] Added meal \(mealId) to timeline with tag: \(tag.displayName)")
+        #endif
+    }
+
+    func removeFromTimeline(mealId: String) async throws {
+        try await FirebaseConfig.mealsCollection.document(mealId).updateData([
+            "isTimelineEvent": false,
+            "timelineTag": FieldValue.delete()
+        ])
+        #if DEBUG
+        print("[MealRepository] Removed meal \(mealId) from timeline")
+        #endif
+    }
+
     func addPartnerReview(mealId: String, review: String) async throws {
         try await FirebaseConfig.mealsCollection.document(mealId).updateData([
             "partnerReview": review,

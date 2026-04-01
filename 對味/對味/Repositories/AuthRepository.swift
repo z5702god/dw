@@ -20,6 +20,8 @@ final class AuthRepository {
                 MealRepository.shared.startListening()
                 RewardRepository.shared.startListening()
                 WishlistRepository.shared.startListening()
+                ConfessionRepository.shared.startListening()
+                DreamRepository.shared.startListening()
             } else {
                 self?.userListener?.remove()
                 self?.partnerListener?.remove()
@@ -28,6 +30,8 @@ final class AuthRepository {
                 MealRepository.shared.stopListening()
                 RewardRepository.shared.stopListening()
                 WishlistRepository.shared.stopListening()
+                ConfessionRepository.shared.stopListening()
+                DreamRepository.shared.stopListening()
             }
         }
     }

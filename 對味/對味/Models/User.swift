@@ -13,6 +13,7 @@ struct AppUser: Codable, Identifiable {
     var coupleId: String
     var totalPoints: Int
     var roleRawValue: String?
+    var tasteProfile: TasteProfile?
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -21,6 +22,7 @@ struct AppUser: Codable, Identifiable {
         case coupleId
         case totalPoints
         case roleRawValue = "role"
+        case tasteProfile
     }
 
     var role: CoupleRole {
