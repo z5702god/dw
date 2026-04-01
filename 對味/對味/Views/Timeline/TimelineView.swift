@@ -93,16 +93,20 @@ struct TimelineView: View {
                         Button {
                             showLandmine = true
                         } label: {
-                            Image(systemName: "bolt.trianglebadge.exclamationmark.fill")
+                            Image("IconLandmine")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 24, height: 24)
                         }
-                        .tint(.appPrimary)
 
                         Button {
                             showTasteTimeline = true
                         } label: {
-                            Image(systemName: "star.fill")
+                            Image("IconTasteTimeline")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 24, height: 24)
                         }
-                        .tint(.appPrimary)
 
                         Button {
                             showPhotoWall = true

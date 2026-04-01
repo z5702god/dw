@@ -33,7 +33,13 @@ struct SettingsView: View {
                     NavigationLink {
                         TasteProfileView()
                     } label: {
-                        Label("口味身分證", systemImage: "person.text.rectangle")
+                        HStack(spacing: 12) {
+                            Image("IconTasteProfile")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 28, height: 28)
+                            Text("口味身分證")
+                        }
                     }
                 }
 

@@ -179,8 +179,10 @@ struct RecordView: View {
                 Section {
                     NavigationLink(destination: ConfessionView()) {
                         HStack(spacing: 12) {
-                            Text("🍪")
-                                .font(.title2)
+                            Image("IconConfession")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 36, height: 36)
                             VStack(alignment: .leading, spacing: 2) {
                                 Text("嘴饞告解室")
                                     .font(.subheadline.weight(.semibold))
