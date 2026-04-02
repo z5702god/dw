@@ -2,7 +2,8 @@ import Foundation
 import FirebaseFirestore
 
 // MARK: - 告解類別
-enum ConfessionCategory: String, Codable, CaseIterable {
+enum ConfessionCategory: String, Codable, CaseIterable, Identifiable {
+    var id: String { rawValue }
     case snack = "snack"
     case nightSnack = "night_snack"
     case dessert = "dessert"
