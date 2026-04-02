@@ -87,20 +87,23 @@ struct ConfessionView: View {
         .listStyle(.insetGrouped)
         .navigationTitle("嘴饞告解室")
         .navigationBarTitleDisplayMode(.inline)
-        .confirmationDialog(
-            "確定要告解嗎？",
-            isPresented: $showConfirm,
-            titleVisibility: .visible,
-            presenting: selectedCategory
-        ) { category in
-            Button("告解 \(category.displayName)") {
+        .alert("確定要告解嗎？", isPresented: $showConfirm) {
+            Button("告解 \(selectedCategory?.displayName ?? "")") {
+                guard let category = selectedCategory else { return }
                 Task {
                     isConfessing = true
                     try? await confessionRepo.confess(category: category)
                     isConfessing = false
+                    selectedCategory = nil
                 }
             }
-            Button("取消", role: .cancel) {}
+            Button("取消", role: .cancel) {
+                selectedCategory = nil
+            }
+        } message: {
+            if let category = selectedCategory {
+                Text("你確定要告解偷吃了「\(category.displayName)」嗎？")
+            }
         }
         .sensoryFeedback(.success, trigger: confessionRepo.confessions.count)
     }
