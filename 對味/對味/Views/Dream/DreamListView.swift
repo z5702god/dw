@@ -25,7 +25,7 @@ struct DreamListView: View {
                             DreamMatchedRow(item: item)
                         }
                     } header: {
-                        Label("配對成功 💕", systemImage: "heart.fill")
+                        Label("配對成功", systemImage: "heart.fill")
                             .foregroundStyle(.pink)
                             .font(.subheadline.weight(.semibold))
                     }

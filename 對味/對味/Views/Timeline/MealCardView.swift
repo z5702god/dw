@@ -44,7 +44,8 @@ struct MealCardView: View {
 
                 HStack(spacing: 4) {
                     if let mood = meal.mood {
-                        Text(mood.emoji)
+                        Image(systemName: mood.icon)
+                            .foregroundStyle(.appPrimary)
                             .accessibilityLabel(mood.displayName)
                     }
                     Image(systemName: meal.mealSlot.icon)

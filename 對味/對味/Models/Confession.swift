@@ -25,6 +25,15 @@ enum ConfessionCategory: String, Codable, CaseIterable {
         case .drink: return "🧋"
         }
     }
+
+    var icon: String {
+        switch self {
+        case .snack: return "leaf.fill"
+        case .nightSnack: return "moon.stars.fill"
+        case .dessert: return "birthday.cake.fill"
+        case .drink: return "cup.and.saucer.fill"
+        }
+    }
 }
 
 // MARK: - 告解紀錄

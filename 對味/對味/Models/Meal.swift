@@ -69,6 +69,15 @@ enum MealMood: String, Codable, CaseIterable {
         case .daily: return "🍽️"
         }
     }
+
+    var icon: String {
+        switch self {
+        case .happy: return "face.smiling"
+        case .date: return "heart.fill"
+        case .missing: return "heart.text.square"
+        case .daily: return "fork.knife"
+        }
+    }
 }
 
 // MARK: - Meal Model
@@ -182,6 +191,19 @@ enum TimelineTag: String, Codable, CaseIterable {
         case .milestone: return "⭐"
         case .firstCook: return "👩‍🍳"
         case .special: return "✨"
+        }
+    }
+
+    var icon: String {
+        switch self {
+        case .firstDate: return "heart.fill"
+        case .birthday: return "birthday.cake"
+        case .anniversary: return "sparkles"
+        case .makeUp: return "paintpalette"
+        case .travel: return "airplane"
+        case .milestone: return "star.fill"
+        case .firstCook: return "flame"
+        case .special: return "sparkles"
         }
     }
 }

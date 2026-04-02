@@ -140,8 +140,10 @@ struct RewardListView: View {
                 ForEach(rewardRepo.availableRewards) { reward in
                     VStack(alignment: .leading, spacing: 8) {
                         HStack(spacing: 10) {
-                            Text(viewModel.rewardEmoji(for: reward.title))
+                            Image(systemName: viewModel.rewardIcon(for: reward.title))
                                 .font(.title2)
+                                .symbolRenderingMode(.hierarchical)
+                                .foregroundStyle(.appPrimary)
                                 .frame(width: 40, height: 40)
                                 .background(Color(.tertiarySystemGroupedBackground))
                                 .clipShape(RoundedRectangle(cornerRadius: 10))
@@ -175,11 +177,13 @@ struct RewardListView: View {
 
         // Pending rewards
         if !rewardRepo.redeemedRewards.isEmpty {
-            Section("已許願 🌟") {
+            Section {
                 ForEach(rewardRepo.redeemedRewards) { reward in
                     HStack(spacing: 10) {
-                        Text(viewModel.rewardEmoji(for: reward.title))
+                        Image(systemName: viewModel.rewardIcon(for: reward.title))
                             .font(.title2)
+                            .symbolRenderingMode(.hierarchical)
+                            .foregroundStyle(.appPrimary)
                             .frame(width: 40, height: 40)
                             .background(Color(.tertiarySystemGroupedBackground))
                             .clipShape(RoundedRectangle(cornerRadius: 10))
@@ -190,10 +194,20 @@ struct RewardListView: View {
 
                         Spacer()
 
-                        Text("已送出願望 🌟")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
+                        HStack(spacing: 3) {
+                            Text("已送出願望")
+                            Image(systemName: "sparkles")
+                                .foregroundStyle(.appPrimary)
+                        }
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                     }
+                }
+            } header: {
+                HStack(spacing: 4) {
+                    Text("已許願")
+                    Image(systemName: "sparkles")
+                        .foregroundStyle(.appPrimary)
                 }
             }
         }
@@ -271,8 +285,10 @@ struct RewardListView: View {
         Section("已完成") {
             ForEach(rewardRepo.completedRewards) { reward in
                 HStack(spacing: 12) {
-                    Text(viewModel.rewardEmoji(for: reward.title))
+                    Image(systemName: viewModel.rewardIcon(for: reward.title))
                         .font(.title2)
+                        .symbolRenderingMode(.hierarchical)
+                        .foregroundStyle(.appPrimary)
                         .frame(width: 36, height: 36)
                         .background(Color(.tertiarySystemGroupedBackground))
                         .clipShape(RoundedRectangle(cornerRadius: 8))

@@ -74,10 +74,15 @@ struct MealDetailView: View {
                     HStack(spacing: 4) {
                         // Mood
                         if let mood = meal.mood {
-                            Text(mood.emoji + " " + mood.displayName)
-                                .font(.subheadline)
-                                .foregroundStyle(.secondary)
-                                .accessibilityLabel(mood.displayName)
+                            HStack(spacing: 3) {
+                                Image(systemName: mood.icon)
+                                    .font(.caption)
+                                    .foregroundStyle(.appPrimary)
+                                Text(mood.displayName)
+                                    .font(.subheadline)
+                                    .foregroundStyle(.secondary)
+                            }
+                            .accessibilityLabel(mood.displayName)
                             Text("·")
                                 .foregroundStyle(.secondary)
                         }
@@ -121,7 +126,7 @@ struct MealDetailView: View {
 
             // Partner review display
             if let partnerReview = meal.partnerReview, !partnerReview.isEmpty {
-                Section(isOwnMeal ? "另一半的悄悄話 💌" : "我的悄悄話 💌") {
+                Section(isOwnMeal ? "另一半的悄悄話" : "我的悄悄話") {
                     VStack(alignment: .leading, spacing: 4) {
                         Text(partnerReview)
                             .font(.body)
@@ -137,7 +142,7 @@ struct MealDetailView: View {
 
             // Show submitted review optimistically (only before server syncs back)
             if submitted && (meal.partnerReview == nil || meal.partnerReview?.isEmpty == true) {
-                Section("我的悄悄話 💌") {
+                Section("我的悄悄話") {
                     Text(partnerReviewText)
                         .font(.body)
                         .lineSpacing(4)
@@ -146,7 +151,7 @@ struct MealDetailView: View {
 
             // Add review input if this is partner's meal and no review yet
             if !isOwnMeal && !submitted && (meal.partnerReview == nil || meal.partnerReview?.isEmpty == true) {
-                Section("留一句悄悄話給他 💕") {
+                Section("留一句悄悄話給他") {
                     HStack {
                         TextField("寫點什麼...", text: $partnerReviewText)
                         Button("送出") {
@@ -168,8 +173,15 @@ struct MealDetailView: View {
                 if isInTimeline {
                     HStack {
                         if let tag = meal.timelineTag {
-                            Label(tag.emoji + " " + tag.displayName, systemImage: "star.fill")
-                                .foregroundStyle(.appPrimary)
+                            Label {
+                                HStack(spacing: 4) {
+                                    Image(systemName: tag.icon)
+                                    Text(tag.displayName)
+                                }
+                            } icon: {
+                                Image(systemName: "star.fill")
+                            }
+                            .foregroundStyle(.appPrimary)
                         } else {
                             Label("已加入時間軸", systemImage: "star.fill")
                                 .foregroundStyle(.appPrimary)
@@ -196,12 +208,16 @@ struct MealDetailView: View {
                     .disabled(isUpdatingTimeline)
                 }
             } header: {
-                Text("味道時間軸 ✨")
+                HStack(spacing: 4) {
+                    Text("味道時間軸")
+                    Image(systemName: "sparkles")
+                        .foregroundStyle(.appPrimary)
+                }
             }
         }
         .confirmationDialog("選擇時間軸標籤", isPresented: $showTimelineTagPicker, titleVisibility: .visible) {
             ForEach(TimelineTag.allCases, id: \.self) { tag in
-                Button("\(tag.emoji) \(tag.displayName)") {
+                Button(tag.displayName) {
                     guard let id = meal.id else { return }
                     isUpdatingTimeline = true
                     Task {

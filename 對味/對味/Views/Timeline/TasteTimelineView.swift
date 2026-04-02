@@ -15,8 +15,10 @@ struct TasteTimelineView: View {
             Group {
                 if timelineEvents.isEmpty {
                     VStack(spacing: 16) {
-                        Text("✨")
-                            .font(.system(size: 60))
+                        Image(systemName: "sparkles")
+                            .font(.system(size: 50))
+                            .foregroundStyle(.appPrimary)
+                            .symbolEffect(.pulse)
                         Text("還沒有特別的味道記憶")
                             .font(.headline)
                             .foregroundStyle(.secondary)
@@ -41,7 +43,7 @@ struct TasteTimelineView: View {
                     }
                 }
             }
-            .navigationTitle("味道時間軸 ✨")
+            .navigationTitle("味道時間軸")
             .navigationBarTitleDisplayMode(.inline)
         }
     }
@@ -63,13 +65,15 @@ private struct TimelineNodeView: View {
                     .fill(isFirst ? Color.clear : Color.appPrimary.opacity(0.3))
                     .frame(width: 2, height: 20)
 
-                // 圓點 + emoji
+                // 圓點 + SF Symbol
                 ZStack {
                     Circle()
                         .fill(Color.appPrimary.opacity(0.15))
                         .frame(width: 36, height: 36)
-                    Text(meal.timelineTag?.emoji ?? "⭐")
+                    Image(systemName: meal.timelineTag?.icon ?? "star.fill")
                         .font(.body)
+                        .foregroundStyle(.appPrimary)
+                        .symbolRenderingMode(.hierarchical)
                 }
 
                 // 下半連接線
@@ -107,13 +111,17 @@ private struct TimelineNodeView: View {
                             .lineLimit(1)
 
                         if let tag = meal.timelineTag {
-                            Text(tag.emoji + " " + tag.displayName)
-                                .font(.caption)
-                                .padding(.horizontal, 8)
-                                .padding(.vertical, 2)
-                                .background(Color.appPrimary.opacity(0.12))
-                                .foregroundStyle(.appPrimary)
-                                .clipShape(Capsule())
+                            HStack(spacing: 3) {
+                                Image(systemName: tag.icon)
+                                    .font(.caption2)
+                                Text(tag.displayName)
+                            }
+                            .font(.caption)
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 2)
+                            .background(Color.appPrimary.opacity(0.12))
+                            .foregroundStyle(.appPrimary)
+                            .clipShape(Capsule())
                         }
                     }
 

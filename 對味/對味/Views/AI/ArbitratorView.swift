@@ -27,8 +27,10 @@ struct ArbitratorView: View {
                 VStack(spacing: 24) {
                     // 標題
                     VStack(spacing: 8) {
-                        Text("⚖️")
-                            .font(.system(size: 60))
+                        Image(systemName: "scalemass.fill")
+                            .font(.system(size: 50))
+                            .foregroundStyle(.appPrimary)
+                            .symbolRenderingMode(.hierarchical)
                         Text("美食法庭")
                             .font(.title.bold())
                         Text("吃什麼吵不停？交給法官來判決！")
@@ -74,7 +76,10 @@ struct ArbitratorView: View {
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 12)
                         } else {
-                            Text("開庭！⚖️")
+                            HStack(spacing: 4) {
+                                Text("開庭！")
+                                Image(systemName: "scalemass.fill")
+                            }
                                 .font(.headline)
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 12)
@@ -88,8 +93,12 @@ struct ArbitratorView: View {
                     // 判決結果
                     if let verdict {
                         VStack(spacing: 12) {
-                            Text("🔨 判決結果")
-                                .font(.headline)
+                            HStack(spacing: 4) {
+                                Image(systemName: "hammer.fill")
+                                    .foregroundStyle(.appPrimary)
+                                Text("判決結果")
+                            }
+                            .font(.headline)
                             Text(verdict)
                                 .font(.body)
                                 .multilineTextAlignment(.leading)

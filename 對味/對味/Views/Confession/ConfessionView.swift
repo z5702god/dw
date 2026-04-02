@@ -26,8 +26,11 @@ struct ConfessionView: View {
                                 showConfirm = true
                             } label: {
                                 VStack(spacing: 6) {
-                                    Text(category.emoji)
-                                        .font(.system(size: 40))
+                                    Image(systemName: category.icon)
+                                        .font(.system(size: 32))
+                                        .symbolRenderingMode(.hierarchical)
+                                        .foregroundStyle(.appPrimary)
+                                        .symbolEffect(.bounce, value: isConfessing)
                                     Text(category.displayName)
                                         .font(.subheadline.weight(.medium))
                                         .foregroundStyle(.primary)
@@ -87,15 +90,14 @@ struct ConfessionView: View {
         .confirmationDialog(
             "確定要告解嗎？",
             isPresented: $showConfirm,
-            titleVisibility: .visible
-        ) {
-            if let category = selectedCategory {
-                Button("告解 \(category.emoji)\(category.displayName)") {
-                    Task {
-                        isConfessing = true
-                        try? await confessionRepo.confess(category: category)
-                        isConfessing = false
-                    }
+            titleVisibility: .visible,
+            presenting: selectedCategory
+        ) { category in
+            Button("告解 \(category.displayName)") {
+                Task {
+                    isConfessing = true
+                    try? await confessionRepo.confess(category: category)
+                    isConfessing = false
                 }
             }
             Button("取消", role: .cancel) {}
@@ -116,7 +118,11 @@ private struct ConfessionResponseRow: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             HStack {
-                Text("\(confession.category.emoji) \(authRepo.partnerName) 偷吃了\(confession.category.displayName)")
+                HStack(spacing: 4) {
+                    Image(systemName: confession.category.icon)
+                        .foregroundStyle(.appPrimary)
+                    Text("\(authRepo.partnerName) 偷吃了\(confession.category.displayName)")
+                }
                     .font(.subheadline)
                 Spacer()
                 if let date = confession.createdAt {
@@ -179,8 +185,10 @@ private struct ConfessionHistoryRow: View {
 
     var body: some View {
         HStack {
-            Text(confession.category.emoji)
+            Image(systemName: confession.category.icon)
                 .font(.title3)
+                .symbolRenderingMode(.hierarchical)
+                .foregroundStyle(.appPrimary)
 
             VStack(alignment: .leading, spacing: 2) {
                 Text("\(isMyConfession ? "我" : authRepo.partnerName)偷吃了\(confession.category.displayName)")
@@ -196,8 +204,10 @@ private struct ConfessionHistoryRow: View {
             Spacer()
 
             if let response = confession.response {
-                Text(response == "forgive" ? "😇" : "🤤")
+                Image(systemName: response == "forgive" ? "face.smiling" : "mouth.fill")
                     .font(.title3)
+                    .symbolRenderingMode(.hierarchical)
+                    .foregroundStyle(response == "forgive" ? .green : .orange)
             }
         }
     }

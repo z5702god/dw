@@ -23,7 +23,7 @@ final class RewardViewModel {
     var completedRewards: [Reward] { rewardRepo.completedRewards }
     var totalPoints: Int { authRepo.appUser?.totalPoints ?? 0 }
 
-    // MARK: - Emoji Helper
+    // MARK: - Emoji Helper (backward compat)
 
     func rewardEmoji(for title: String) -> String {
         if title.contains("電影") { return "🎬" }
@@ -33,6 +33,18 @@ final class RewardViewModel {
         if title.contains("禮物") { return "🎁" }
         if title.contains("休假") || title.contains("假") { return "🏖️" }
         return "🎁"
+    }
+
+    // MARK: - SF Symbol Icon Helper
+
+    func rewardIcon(for title: String) -> String {
+        if title.contains("電影") { return "film" }
+        if title.contains("按摩") { return "hand.raised.fill" }
+        if title.contains("旅遊") || title.contains("機票") { return "airplane" }
+        if title.contains("晚餐") || title.contains("餐") { return "fork.knife" }
+        if title.contains("禮物") { return "gift.fill" }
+        if title.contains("休假") || title.contains("假") { return "sun.max.fill" }
+        return "gift.fill"
     }
 
     // MARK: - Actions

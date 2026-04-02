@@ -5,10 +5,11 @@ struct MilestoneView: View {
     let onDismiss: () -> Void
 
     @State private var appeared = false
-    @State private var emojiOffsets: [CGFloat] = (0..<12).map { _ in CGFloat.random(in: -180...180) }
-    @State private var emojiPhases: [CGFloat] = (0..<12).map { _ in CGFloat.random(in: 0...1) }
+    @State private var symbolOffsets: [CGFloat] = (0..<12).map { _ in CGFloat.random(in: -180...180) }
+    @State private var symbolPhases: [CGFloat] = (0..<12).map { _ in CGFloat.random(in: 0...1) }
 
-    private let emojis = ["🍜", "🍣", "🥘", "🍕", "❤️", "🎉", "✨", "🍰", "🥂", "💕", "🎊", "🍳"]
+    private let celebrationSymbols = ["fork.knife", "heart.fill", "star.fill", "sparkles", "wand.and.stars", "hands.clap.fill", "gift.fill", "flame", "cup.and.saucer.fill", "birthday.cake", "sun.max.fill", "moon.stars.fill"]
+    private let symbolColors: [Color] = [.appPrimary, .pink, .yellow, .purple, .blue, .green, .red, .orange, .brown, .pink, .yellow, .indigo]
 
     var milestoneMessage: String {
         switch mealCount {
@@ -28,13 +29,15 @@ struct MilestoneView: View {
                     .ignoresSafeArea()
                     .onTapGesture { onDismiss() }
 
-                // Floating emojis
-                ForEach(0..<emojis.count, id: \.self) { index in
-                    Text(emojis[index])
-                        .font(.system(size: 28))
+                // Floating SF Symbols
+                ForEach(0..<celebrationSymbols.count, id: \.self) { index in
+                    Image(systemName: celebrationSymbols[index])
+                        .font(.system(size: 24))
+                        .foregroundStyle(symbolColors[index])
+                        .symbolRenderingMode(.hierarchical)
                         .offset(
-                            x: emojiOffsets[index],
-                            y: appeared ? -geometry.size.height * emojiPhases[index] : 400
+                            x: symbolOffsets[index],
+                            y: appeared ? -geometry.size.height * symbolPhases[index] : 400
                         )
                         .opacity(appeared ? 0.8 : 0)
                         .animation(

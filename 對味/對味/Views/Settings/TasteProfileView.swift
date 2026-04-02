@@ -88,8 +88,12 @@ struct TasteProfileView: View {
     private var editFormContent: some View {
         // 🚫 不吃
         VStack(alignment: .leading, spacing: 6) {
-            Text("🚫 不吃的食物")
-                .font(.subheadline.weight(.medium))
+            HStack(spacing: 4) {
+                Image(systemName: "xmark.circle.fill")
+                    .foregroundStyle(.red)
+                Text("不吃的食物")
+            }
+            .font(.subheadline.weight(.medium))
             FlowTagsView(tags: $myProfile.dontEat)
             HStack {
                 TextField("新增不吃的...", text: $newDontEatItem)
@@ -106,8 +110,12 @@ struct TasteProfileView: View {
 
         // ⚠️ 過敏
         VStack(alignment: .leading, spacing: 6) {
-            Text("⚠️ 過敏原")
-                .font(.subheadline.weight(.medium))
+            HStack(spacing: 4) {
+                Image(systemName: "exclamationmark.triangle.fill")
+                    .foregroundStyle(.orange)
+                Text("過敏原")
+            }
+            .font(.subheadline.weight(.medium))
             FlowTagsView(tags: $myProfile.allergies)
             HStack {
                 TextField("新增過敏原...", text: $newAllergyItem)
@@ -124,8 +132,12 @@ struct TasteProfileView: View {
 
         // 🌶️ 辣度
         VStack(alignment: .leading, spacing: 6) {
-            Text("🌶️ 辣度接受度")
-                .font(.subheadline.weight(.medium))
+            HStack(spacing: 4) {
+                Image(systemName: "flame.fill")
+                    .foregroundStyle(.red)
+                Text("辣度接受度")
+            }
+            .font(.subheadline.weight(.medium))
             Picker("辣度", selection: $myProfile.spiceLevel) {
                 ForEach(TasteProfile.spiceLevels, id: \.self) { level in
                     Text(level).tag(level)
@@ -136,8 +148,12 @@ struct TasteProfileView: View {
 
         // ❤️ 最愛料理
         VStack(alignment: .leading, spacing: 6) {
-            Text("❤️ 最愛料理")
-                .font(.subheadline.weight(.medium))
+            HStack(spacing: 4) {
+                Image(systemName: "heart.fill")
+                    .foregroundStyle(.pink)
+                Text("最愛料理")
+            }
+            .font(.subheadline.weight(.medium))
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 70))], spacing: 8) {
                 ForEach(TasteProfile.cuisineOptions, id: \.self) { cuisine in
                     let isSelected = myProfile.favoriteCuisines.contains(cuisine)
@@ -163,8 +179,12 @@ struct TasteProfileView: View {
 
         // ☕ 咖啡
         VStack(alignment: .leading, spacing: 6) {
-            Text("☕ 咖啡喜好")
-                .font(.subheadline.weight(.medium))
+            HStack(spacing: 4) {
+                Image(systemName: "cup.and.saucer.fill")
+                    .foregroundStyle(.brown)
+                Text("咖啡喜好")
+            }
+            .font(.subheadline.weight(.medium))
             TextField("例如：拿鐵、美式、不喝咖啡", text: Binding(
                 get: { myProfile.coffeePreference ?? "" },
                 set: { myProfile.coffeePreference = $0.isEmpty ? nil : $0 }
@@ -174,8 +194,12 @@ struct TasteProfileView: View {
 
         // 🍰 甜點
         VStack(alignment: .leading, spacing: 6) {
-            Text("🍰 甜點喜好")
-                .font(.subheadline.weight(.medium))
+            HStack(spacing: 4) {
+                Image(systemName: "birthday.cake.fill")
+                    .foregroundStyle(.pink)
+                Text("甜點喜好")
+            }
+            .font(.subheadline.weight(.medium))
             TextField("例如：巧克力、提拉米蘇", text: Binding(
                 get: { myProfile.dessertPreference ?? "" },
                 set: { myProfile.dessertPreference = $0.isEmpty ? nil : $0 }
@@ -185,8 +209,12 @@ struct TasteProfileView: View {
 
         // 🥤 飲料
         VStack(alignment: .leading, spacing: 6) {
-            Text("🥤 飲料喜好")
-                .font(.subheadline.weight(.medium))
+            HStack(spacing: 4) {
+                Image(systemName: "takeoutbag.and.cup.and.straw.fill")
+                    .foregroundStyle(.appPrimary)
+                Text("飲料喜好")
+            }
+            .font(.subheadline.weight(.medium))
             TextField("例如：珍奶、綠茶、水果茶", text: Binding(
                 get: { myProfile.drinkPreference ?? "" },
                 set: { myProfile.drinkPreference = $0.isEmpty ? nil : $0 }
@@ -196,8 +224,12 @@ struct TasteProfileView: View {
 
         // 📝 備註
         VStack(alignment: .leading, spacing: 6) {
-            Text("📝 備註")
-                .font(.subheadline.weight(.medium))
+            HStack(spacing: 4) {
+                Image(systemName: "doc.text.fill")
+                    .foregroundStyle(.secondary)
+                Text("備註")
+            }
+            .font(.subheadline.weight(.medium))
             TextField("其他飲食偏好...", text: Binding(
                 get: { myProfile.notes ?? "" },
                 set: { myProfile.notes = $0.isEmpty ? nil : $0 }
@@ -265,27 +297,29 @@ private struct TasteCardView: View {
                 .font(.headline)
 
             if !profile.dontEat.isEmpty {
-                TagRow(icon: "🚫", label: "不吃", items: profile.dontEat, color: .red)
+                TagRow(sfSymbol: "xmark.circle.fill", symbolColor: .red, label: "不吃", items: profile.dontEat, color: .red)
             }
 
             if !profile.allergies.isEmpty {
-                TagRow(icon: "⚠️", label: "過敏", items: profile.allergies, color: .orange)
+                TagRow(sfSymbol: "exclamationmark.triangle.fill", symbolColor: .orange, label: "過敏", items: profile.allergies, color: .orange)
             }
 
             HStack(spacing: 4) {
-                Text("🌶️")
+                Image(systemName: "flame.fill")
+                    .foregroundStyle(.red)
                 Text(profile.spiceLevel)
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             }
 
             if !profile.favoriteCuisines.isEmpty {
-                TagRow(icon: "❤️", label: "最愛", items: profile.favoriteCuisines, color: .pink)
+                TagRow(sfSymbol: "heart.fill", symbolColor: .pink, label: "最愛", items: profile.favoriteCuisines, color: .pink)
             }
 
             if let coffee = profile.coffeePreference, !coffee.isEmpty {
                 HStack(spacing: 4) {
-                    Text("☕")
+                    Image(systemName: "cup.and.saucer.fill")
+                        .foregroundStyle(.brown)
                     Text(coffee)
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
@@ -294,7 +328,8 @@ private struct TasteCardView: View {
 
             if let dessert = profile.dessertPreference, !dessert.isEmpty {
                 HStack(spacing: 4) {
-                    Text("🍰")
+                    Image(systemName: "birthday.cake.fill")
+                        .foregroundStyle(.pink)
                     Text(dessert)
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
@@ -303,7 +338,8 @@ private struct TasteCardView: View {
 
             if let drink = profile.drinkPreference, !drink.isEmpty {
                 HStack(spacing: 4) {
-                    Text("🥤")
+                    Image(systemName: "takeoutbag.and.cup.and.straw.fill")
+                        .foregroundStyle(.appPrimary)
                     Text(drink)
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
@@ -312,7 +348,8 @@ private struct TasteCardView: View {
 
             if let notes = profile.notes, !notes.isEmpty {
                 HStack(spacing: 4) {
-                    Text("📝")
+                    Image(systemName: "doc.text.fill")
+                        .foregroundStyle(.secondary)
                     Text(notes)
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
@@ -324,7 +361,9 @@ private struct TasteCardView: View {
 }
 
 private struct TagRow: View {
-    let icon: String
+    var icon: String? = nil
+    var sfSymbol: String? = nil
+    var symbolColor: Color = .secondary
     let label: String
     let items: [String]
     let color: Color
@@ -332,7 +371,12 @@ private struct TagRow: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             HStack(spacing: 4) {
-                Text(icon)
+                if let sfSymbol {
+                    Image(systemName: sfSymbol)
+                        .foregroundStyle(symbolColor)
+                } else if let icon {
+                    Text(icon)
+                }
                 Text(label)
                     .font(.caption.weight(.medium))
                     .foregroundStyle(.secondary)

@@ -72,13 +72,31 @@ struct RecordView: View {
 
     // MARK: - Greeting
 
-    private var greeting: String {
+    private var greetingText: String {
         let hour = Calendar.current.component(.hour, from: Date())
         let name = authRepo.appUser?.displayName ?? ""
         switch hour {
-        case 5..<12: return "早安 \(name) ☀️"
-        case 12..<18: return "午安 \(name) 🌤️"
-        default: return "晚安 \(name) 🌙"
+        case 5..<12: return "早安 \(name)"
+        case 12..<18: return "午安 \(name)"
+        default: return "晚安 \(name)"
+        }
+    }
+
+    private var greetingIcon: String {
+        let hour = Calendar.current.component(.hour, from: Date())
+        switch hour {
+        case 5..<12: return "sun.max.fill"
+        case 12..<18: return "cloud.sun.fill"
+        default: return "moon.fill"
+        }
+    }
+
+    private var greetingIconColor: Color {
+        let hour = Calendar.current.component(.hour, from: Date())
+        switch hour {
+        case 5..<12: return .yellow
+        case 12..<18: return .orange
+        default: return .yellow
         }
     }
 
@@ -89,8 +107,13 @@ struct RecordView: View {
             List {
                 // MARK: Section 1 — Partner status
                 Section {
-                    Text(greeting)
-                        .font(.title2.bold())
+                    HStack(spacing: 4) {
+                        Text(greetingText)
+                            .font(.title2.bold())
+                        Image(systemName: greetingIcon)
+                            .foregroundStyle(greetingIconColor)
+                            .symbolEffect(.pulse)
+                    }
 
                     HStack(spacing: 8) {
                         Image(systemName: "person.2.fill")
@@ -124,7 +147,11 @@ struct RecordView: View {
                             }
                         }
                     } header: {
-                        Text("悄悄話 💬")
+                        HStack(spacing: 4) {
+                            Text("悄悄話")
+                            Image(systemName: "bubble.left.fill")
+                                .foregroundStyle(.appPrimary)
+                        }
                     }
                 }
 

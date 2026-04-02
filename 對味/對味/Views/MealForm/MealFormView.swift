@@ -131,8 +131,11 @@ struct MealFormView: View {
                                 }
                             } label: {
                                 VStack(spacing: 4) {
-                                    Text(mood.emoji)
+                                    Image(systemName: mood.icon)
                                         .font(.title2)
+                                        .symbolRenderingMode(.hierarchical)
+                                        .foregroundStyle(viewModel.mood == mood ? .appPrimary : .secondary)
+                                        .symbolEffect(.bounce, value: viewModel.mood == mood)
                                     Text(mood.displayName)
                                         .font(.caption2)
                                         .foregroundStyle(viewModel.mood == mood ? .appPrimary : .secondary)
@@ -214,7 +217,7 @@ struct MealFormView: View {
                                         .font(.subheadline)
                                 } else {
                                     Image(systemName: "sparkles")
-                                    Text("AI 幫我寫 ✨")
+                                    Text("AI 幫我寫")
                                         .font(.subheadline)
                                 }
                             }
