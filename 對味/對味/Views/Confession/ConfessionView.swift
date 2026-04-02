@@ -6,6 +6,8 @@ struct ConfessionView: View {
 
     @State private var isConfessing = false
     @State private var selectedCategory: ConfessionCategory?
+    @State private var showConfirm = false
+    @State private var confirmCategoryName = ""
 
     var body: some View {
         List {
@@ -22,6 +24,8 @@ struct ConfessionView: View {
                         ForEach(ConfessionCategory.allCases, id: \.self) { category in
                             Button {
                                 selectedCategory = category
+                                confirmCategoryName = category.displayName
+                                showConfirm = true
                             } label: {
                                 VStack(spacing: 6) {
                                     Image(systemName: category.icon)
@@ -85,28 +89,21 @@ struct ConfessionView: View {
         .listStyle(.insetGrouped)
         .navigationTitle("嘴饞告解室")
         .navigationBarTitleDisplayMode(.inline)
-        .alert(
-            "確定要告解嗎？",
-            isPresented: .init(
-                get: { selectedCategory != nil },
-                set: { if !$0 { selectedCategory = nil } }
-            )
-        ) {
-            Button("告解 \(selectedCategory?.displayName ?? "")") {
+        .alert("確定要告解嗎？", isPresented: $showConfirm) {
+            Button("告解 \(confirmCategoryName)") {
                 guard let cat = selectedCategory else { return }
-                let toConfess = cat
-                selectedCategory = nil
                 Task {
                     isConfessing = true
-                    try? await confessionRepo.confess(category: toConfess)
+                    try? await confessionRepo.confess(category: cat)
                     isConfessing = false
+                    selectedCategory = nil
                 }
             }
             Button("取消", role: .cancel) {
                 selectedCategory = nil
             }
         } message: {
-            Text("你確定要告解偷吃了「\(selectedCategory?.displayName ?? "")」嗎？")
+            Text("你確定要告解偷吃了「\(confirmCategoryName)」嗎？")
         }
         .sensoryFeedback(.success, trigger: confessionRepo.confessions.count)
     }
