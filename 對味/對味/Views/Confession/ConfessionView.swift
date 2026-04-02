@@ -22,27 +22,27 @@ struct ConfessionView: View {
                         GridItem(.flexible())
                     ], spacing: 12) {
                         ForEach(ConfessionCategory.allCases, id: \.self) { category in
-                            Button {
+                            VStack(spacing: 6) {
+                                Image(systemName: category.icon)
+                                    .font(.system(size: 32))
+                                    .symbolRenderingMode(.hierarchical)
+                                    .foregroundStyle(.appPrimary)
+                                Text(category.displayName)
+                                    .font(.subheadline.weight(.medium))
+                                    .foregroundStyle(.primary)
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 16)
+                            .background(Color(.tertiarySystemGroupedBackground))
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                            .contentShape(Rectangle())
+                            .onTapGesture {
+                                guard !isConfessing else { return }
                                 selectedCategory = category
                                 confirmCategoryName = category.displayName
                                 showConfirm = true
-                            } label: {
-                                VStack(spacing: 6) {
-                                    Image(systemName: category.icon)
-                                        .font(.system(size: 32))
-                                        .symbolRenderingMode(.hierarchical)
-                                        .foregroundStyle(.appPrimary)
-                                        .symbolEffect(.bounce, value: isConfessing)
-                                    Text(category.displayName)
-                                        .font(.subheadline.weight(.medium))
-                                        .foregroundStyle(.primary)
-                                }
-                                .frame(maxWidth: .infinity)
-                                .padding(.vertical, 16)
-                                .background(Color(.tertiarySystemGroupedBackground))
-                                .clipShape(RoundedRectangle(cornerRadius: 12))
                             }
-                            .disabled(isConfessing)
+                            .opacity(isConfessing ? 0.5 : 1)
                         }
                     }
                 }
