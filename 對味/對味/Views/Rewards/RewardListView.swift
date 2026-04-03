@@ -46,6 +46,14 @@ struct RewardListView: View {
                             .font(.headline)
                     }
                 }
+                ToolbarItem(placement: .topBarTrailing) {
+                    NavigationLink {
+                        AchievementWallView()
+                    } label: {
+                        Image(systemName: "trophy.fill")
+                            .foregroundStyle(.appPrimary)
+                    }
+                }
             }
             .task { await viewModel.seedDefaultRewardsIfNeeded() }
             .onChange(of: rewardRepo.redeemedRewards.count) {
@@ -149,9 +157,14 @@ struct RewardListView: View {
                                 .clipShape(RoundedRectangle(cornerRadius: 10))
 
                             VStack(alignment: .leading, spacing: 2) {
-                                Text(reward.title)
+                                Text(rewardMainTitle(reward.title))
                                     .font(.body.weight(.medium))
                                     .lineLimit(1)
+                                if let sub = rewardSubtitle(reward.title) {
+                                    Text(sub)
+                                        .font(.caption)
+                                        .foregroundStyle(.tertiary)
+                                }
                                 Text("\(reward.pointsCost) 點")
                                     .font(.caption)
                                     .foregroundStyle(.secondary)
@@ -190,7 +203,7 @@ struct RewardListView: View {
 
                         Text(reward.title)
                             .font(.body)
-                            .lineLimit(1)
+                            .lineLimit(2)
 
                         Spacer()
 
@@ -311,6 +324,26 @@ struct RewardListView: View {
                 }
             }
         }
+    }
+
+    // MARK: - Title Parsing
+
+    /// 「排隊美食（Luke 去排，再遠都要）」→ 主標題「排隊美食」
+    private func rewardMainTitle(_ title: String) -> String {
+        if let range = title.range(of: "（") ?? title.range(of: "(") {
+            return String(title[..<range.lowerBound]).trimmingCharacters(in: .whitespaces)
+        }
+        return title
+    }
+
+    /// 「排隊美食（Luke 去排，再遠都要）」→ 副標題「Luke 去排，再遠都要」
+    private func rewardSubtitle(_ title: String) -> String? {
+        let openParen: Character = title.contains("（") ? "（" : "("
+        let closeParen: Character = title.contains("）") ? "）" : ")"
+        guard let start = title.firstIndex(of: openParen),
+              let end = title.firstIndex(of: closeParen) else { return nil }
+        let sub = String(title[title.index(after: start)..<end]).trimmingCharacters(in: .whitespaces)
+        return sub.isEmpty ? nil : sub
     }
 }
 

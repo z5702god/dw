@@ -1,6 +1,7 @@
 import SwiftUI
 import PhotosUI
 import MapKit
+import FirebaseFirestore
 
 @MainActor
 @Observable
@@ -14,6 +15,7 @@ final class MealFormViewModel {
     var isLoading = false
     var errorMessage: String?
     var pointEarned = false
+    var newlyUnlockedAchievements: [Achievement] = []
 
     // 地點搜尋
     var searchQuery = ""
@@ -32,6 +34,7 @@ final class MealFormViewModel {
     private let storageRepo = StorageRepository.shared
     private let authRepo = AuthRepository.shared
     private let pointsService = PointsService.shared
+    private let achievementService = AchievementService.shared
 
     // 有選地點 = 外食，沒選 = 在家
     var mealPlace: MealPlace {
@@ -168,12 +171,27 @@ final class MealFormViewModel {
                 pointEarned = true
             }
 
+            // 成就檢查（fire-and-forget）
+            await checkAchievements()
+
+            // 更新連續打卡
+            await achievementService.updateStreak()
+
             isLoading = false
             return true
         } catch {
             errorMessage = "儲存失敗：\(error.localizedDescription)"
             isLoading = false
             return false
+        }
+    }
+
+    private func checkAchievements() async {
+        let unlockedIds = authRepo.appUser?.unlockedAchievementIds ?? []
+        let newlyUnlocked = achievementService.checkAll(unlockedIds: unlockedIds)
+        if !newlyUnlocked.isEmpty {
+            await achievementService.unlockAchievements(newlyUnlocked)
+            newlyUnlockedAchievements = newlyUnlocked
         }
     }
 }

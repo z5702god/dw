@@ -32,6 +32,9 @@ final class RewardViewModel {
         if title.contains("晚餐") || title.contains("餐") { return "🍽️" }
         if title.contains("禮物") { return "🎁" }
         if title.contains("休假") || title.contains("假") { return "🏖️" }
+        if title.contains("助理") { return "🫡" }
+        if title.contains("排隊") { return "🧍" }
+        if title.contains("溫泉") { return "♨️" }
         return "🎁"
     }
 
@@ -44,6 +47,9 @@ final class RewardViewModel {
         if title.contains("晚餐") || title.contains("餐") { return "fork.knife" }
         if title.contains("禮物") { return "gift.fill" }
         if title.contains("休假") || title.contains("假") { return "sun.max.fill" }
+        if title.contains("助理") { return "person.fill.checkmark" }
+        if title.contains("排隊") { return "figure.stand.line.dotted.figure.stand" }
+        if title.contains("溫泉") { return "bathtub.fill" }
         return "gift.fill"
     }
 
@@ -105,12 +111,15 @@ final class RewardViewModel {
         #endif
 
         // If there are already enough available rewards, skip
-        guard rewardRepo.availableRewards.count < 3 else { return }
+        guard rewardRepo.availableRewards.count < 6 else { return }
 
         let defaults: [(String, Int)] = [
             ("免費看電影一次", 10),
             ("國外旅遊來回機票", 200),
             ("超舒服泰式按摩券一張", 30),
+            ("當一天小助理（叫什麼做什麼）", 25),
+            ("排隊美食（Luke 去排，再遠都要）", 20),
+            ("泡溫泉", 30),
         ]
 
         let existingTitles = Set(rewardRepo.rewards.map { $0.title })

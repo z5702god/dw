@@ -9,6 +9,7 @@ struct MealFormView: View {
     @State private var saveTrigger = false
     @State private var showMapPicker = false
     @State private var isAIGenerating = false
+    @State private var achievementQueue = AchievementUnlockQueue()
 
     var body: some View {
         NavigationStack {
@@ -251,6 +252,8 @@ struct MealFormView: View {
                                 saveTrigger.toggle()
                                 if viewModel.pointEarned {
                                     showCelebration = true
+                                } else if !viewModel.newlyUnlockedAchievements.isEmpty {
+                                    achievementQueue.enqueue(viewModel.newlyUnlockedAchievements)
                                 } else {
                                     dismiss()
                                 }
@@ -276,9 +279,24 @@ struct MealFormView: View {
                 }
             }
             .fullScreenCover(isPresented: $showCelebration, onDismiss: {
-                dismiss()
+                if !viewModel.newlyUnlockedAchievements.isEmpty {
+                    achievementQueue.enqueue(viewModel.newlyUnlockedAchievements)
+                } else {
+                    dismiss()
+                }
             }) {
                 CelebrationView()
+            }
+            .overlay {
+                if let achievement = achievementQueue.currentAchievement {
+                    AchievementUnlockView(achievement: achievement) {
+                        achievementQueue.dismissCurrent()
+                        if !achievementQueue.isShowing {
+                            dismiss()
+                        }
+                    }
+                    .transition(.opacity)
+                }
             }
             .sensoryFeedback(.success, trigger: saveTrigger)
         }

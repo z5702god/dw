@@ -14,6 +14,9 @@ struct AppUser: Codable, Identifiable {
     var totalPoints: Int
     var roleRawValue: String?
     var tasteProfile: TasteProfile?
+    var currentStreak: Int?
+    var maxStreak: Int?
+    var unlockedAchievements: [String: Double]?  // achievementId → unlock timestamp
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -23,6 +26,14 @@ struct AppUser: Codable, Identifiable {
         case totalPoints
         case roleRawValue = "role"
         case tasteProfile
+        case currentStreak
+        case maxStreak
+        case unlockedAchievements
+    }
+
+    var unlockedAchievementIds: Set<String> {
+        guard let dict = unlockedAchievements else { return [] }
+        return Set(dict.keys)
     }
 
     var role: CoupleRole {
