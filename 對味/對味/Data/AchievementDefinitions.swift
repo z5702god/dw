@@ -1,7 +1,7 @@
 import Foundation
 
 enum AchievementDefinitions {
-    static let all: [Achievement] = exploration + habit + couple + reward
+    static let all: [Achievement] = exploration + habit + couple + reward + international
 
     // MARK: - 飲食探索 (6)
 
@@ -200,6 +200,135 @@ enum AchievementDefinitions {
             tier: .diamond,
             category: .reward,
             condition: .totalRedemptions(10)
+        ),
+    ]
+
+    // MARK: - 國際美食 (13)
+
+    static let international: [Achievement] = [
+        // 🛫 起飛吧！— 踏出國門
+        Achievement(
+            id: "intl_first",
+            title: "出國第一餐",
+            description: "首次記錄海外餐點",
+            icon: "airplane.departure",
+            tier: .bronze,
+            category: .international,
+            condition: .firstInternational
+        ),
+        Achievement(
+            id: "intl_countries_2",
+            title: "護照蓋章",
+            description: "在 2 個不同國家記錄",
+            icon: "book.closed.fill",
+            tier: .silver,
+            category: .international,
+            condition: .countryCount(2)
+        ),
+        Achievement(
+            id: "intl_countries_5",
+            title: "亞洲美食通",
+            description: "在 5 個不同國家記錄",
+            icon: "globe.asia.australia.fill",
+            tier: .gold,
+            category: .international,
+            condition: .countryCount(5)
+        ),
+        Achievement(
+            id: "intl_countries_10",
+            title: "世界美食獵人",
+            description: "在 10 個不同國家記錄",
+            icon: "globe.americas.fill",
+            tier: .diamond,
+            category: .international,
+            condition: .countryCount(10)
+        ),
+
+        // 🍜 吃遍天下 — 海外累計餐數
+        Achievement(
+            id: "intl_meals_5",
+            title: "異國初體驗",
+            description: "海外累計記錄 5 餐",
+            icon: "takeoutbag.and.cup.and.straw.fill",
+            tier: .bronze,
+            category: .international,
+            condition: .internationalMealCount(5)
+        ),
+        Achievement(
+            id: "intl_meals_20",
+            title: "國際吃貨",
+            description: "海外累計記錄 20 餐",
+            icon: "fork.knife.circle.fill",
+            tier: .silver,
+            category: .international,
+            condition: .internationalMealCount(20)
+        ),
+        Achievement(
+            id: "intl_meals_50",
+            title: "環遊世界的胃",
+            description: "海外累計記錄 50 餐",
+            icon: "globe.central.south.asia.fill",
+            tier: .gold,
+            category: .international,
+            condition: .internationalMealCount(50)
+        ),
+
+        // 💑 出國放閃 — 情侶海外足跡
+        Achievement(
+            id: "intl_couple_1",
+            title: "情侶飛行家",
+            description: "兩人在同一個海外國家都有記錄",
+            icon: "airplane.circle.fill",
+            tier: .silver,
+            category: .international,
+            condition: .coupleCountryCount(1)
+        ),
+        Achievement(
+            id: "intl_couple_3",
+            title: "蜜月美食團",
+            description: "兩人在 3 個海外國家都有記錄",
+            icon: "heart.circle.fill",
+            tier: .gold,
+            category: .international,
+            condition: .coupleCountryCount(3)
+        ),
+        Achievement(
+            id: "intl_couple_5",
+            title: "味覺環遊世界",
+            description: "兩人在 5 個海外國家都有記錄",
+            icon: "globe.badge.chevron.backward",
+            tier: .diamond,
+            category: .international,
+            condition: .coupleCountryCount(5)
+        ),
+
+        // 🏯 深度旅行 — 單國深入探索
+        Achievement(
+            id: "intl_deep_5",
+            title: "一趟旅行的味道",
+            description: "在同一個海外國家記錄 5 餐",
+            icon: "mappin.and.ellipse",
+            tier: .silver,
+            category: .international,
+            condition: .singleCountryMealCount(5)
+        ),
+        Achievement(
+            id: "intl_deep_10",
+            title: "深度旅行家",
+            description: "在同一個海外國家記錄 10 餐",
+            icon: "map.circle.fill",
+            tier: .gold,
+            category: .international,
+            condition: .singleCountryMealCount(10)
+        ),
+        Achievement(
+            id: "intl_deep_20",
+            title: "在地人認證",
+            description: "在同一個海外國家記錄 20 餐",
+            icon: "building.2.crop.circle.fill",
+            tier: .diamond,
+            category: .international,
+            condition: .singleCountryMealCount(20)
         ),
     ]
 

@@ -26,6 +26,8 @@ final class MealFormViewModel {
     var longitude: Double?
     var city: City?
     var address: String?
+    var country: String?       // ISO country code
+    var countryName: String?   // 顯示用
 
     let locationSearch = LocationSearchService()
     private let locationManager = LocationManager.shared
@@ -90,6 +92,10 @@ final class MealFormViewModel {
             city = City.allCases.first { locality.contains($0.displayName.replacingOccurrences(of: "市", with: "").replacingOccurrences(of: "縣", with: "")) }
         }
 
+        // 偵測國家
+        country = item.placemark.countryCode
+        countryName = item.placemark.country
+
         isSearchMode = false
         locationSearch.clear()
         searchQuery = ""
@@ -121,6 +127,8 @@ final class MealFormViewModel {
         longitude = nil
         city = nil
         address = nil
+        country = nil
+        countryName = nil
     }
 
     func loadImages() async {
@@ -162,7 +170,9 @@ final class MealFormViewModel {
                 longitude: longitude,
                 city: city,
                 address: address,
-                mood: mood
+                mood: mood,
+                country: country,
+                countryName: countryName
             )
 
             try await mealRepo.addMeal(meal)

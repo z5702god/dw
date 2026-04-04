@@ -62,8 +62,9 @@ enum AchievementTier: String, CaseIterable, Comparable {
 enum AchievementCategory: String, CaseIterable {
     case exploration // 飲食探索
     case habit       // 打卡習慣
-    case couple      // 情侶互動
-    case reward      // 獎勵相關
+    case couple        // 情侶互動
+    case reward        // 獎勵相關
+    case international // 國際美食
 
     var displayName: String {
         switch self {
@@ -71,6 +72,7 @@ enum AchievementCategory: String, CaseIterable {
         case .habit: return "打卡習慣"
         case .couple: return "情侶互動"
         case .reward: return "獎勵相關"
+        case .international: return "國際美食"
         }
     }
 
@@ -80,6 +82,7 @@ enum AchievementCategory: String, CaseIterable {
         case .habit: return "clock.badge.checkmark"
         case .couple: return "heart.fill"
         case .reward: return "gift.fill"
+        case .international: return "airplane"
         }
     }
 }
@@ -101,6 +104,12 @@ enum AchievementCondition {
     case completedRewards(Int)
     case totalPoints(Int)
     case totalRedemptions(Int)
+    // 國際美食
+    case firstInternational            // 首次海外記錄
+    case countryCount(Int)             // 去過的海外國家數
+    case internationalMealCount(Int)   // 海外總餐數
+    case coupleCountryCount(Int)       // 兩人都去過的海外國家數
+    case singleCountryMealCount(Int)   // 單一海外國家最多餐數
 
     /// 用於進度顯示的目標值
     var targetValue: Int? {
@@ -114,7 +123,11 @@ enum AchievementCondition {
         case .completedRewards(let n): return n
         case .totalPoints(let n): return n
         case .totalRedemptions(let n): return n
-        case .firstPoint, .monthlyPerfect, .firstDuo, .monthlySync, .firstRedeem:
+        case .countryCount(let n): return n
+        case .internationalMealCount(let n): return n
+        case .coupleCountryCount(let n): return n
+        case .singleCountryMealCount(let n): return n
+        case .firstPoint, .monthlyPerfect, .firstDuo, .monthlySync, .firstRedeem, .firstInternational:
             return nil
         }
     }

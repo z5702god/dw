@@ -98,6 +98,8 @@ struct Meal: Codable, Identifiable {
     var mood: MealMood?            // V1.2: 心情標籤
     var partnerReview: String?     // V1.2: 對方的心得
     var partnerReviewedAt: Date?   // V1.2: 對方留心得的時間
+    var country: String?           // V2.1: ISO country code (e.g. "JP", "KR")
+    var countryName: String?       // V2.1: 顯示用國家名（e.g. "日本"）
     var isTimelineEvent: Bool?     // V2: 味道時間軸標記
     var timelineTag: TimelineTag?  // V2: 時間軸標籤
     @ServerTimestamp var createdAt: Date?
@@ -134,13 +136,15 @@ struct Meal: Codable, Identifiable {
         mood = try container.decodeIfPresent(MealMood.self, forKey: .mood)
         partnerReview = try container.decodeIfPresent(String.self, forKey: .partnerReview)
         partnerReviewedAt = try container.decodeIfPresent(Date.self, forKey: .partnerReviewedAt)
+        country = try container.decodeIfPresent(String.self, forKey: .country)
+        countryName = try container.decodeIfPresent(String.self, forKey: .countryName)
         isTimelineEvent = try container.decodeIfPresent(Bool.self, forKey: .isTimelineEvent)
         timelineTag = try container.decodeIfPresent(TimelineTag.self, forKey: .timelineTag)
         _createdAt = try container.decode(ServerTimestamp<Date>.self, forKey: .createdAt)
     }
 
     // 程式碼建立用
-    init(userId: String, mealPlace: MealPlace, mealSlot: MealSlot, restaurantName: String? = nil, foodName: String? = nil, review: String, rating: MealRating, photoURLs: [String], latitude: Double? = nil, longitude: Double? = nil, city: City? = nil, address: String? = nil, mood: MealMood? = nil) {
+    init(userId: String, mealPlace: MealPlace, mealSlot: MealSlot, restaurantName: String? = nil, foodName: String? = nil, review: String, rating: MealRating, photoURLs: [String], latitude: Double? = nil, longitude: Double? = nil, city: City? = nil, address: String? = nil, mood: MealMood? = nil, country: String? = nil, countryName: String? = nil) {
         self.userId = userId
         self.mealPlace = mealPlace
         self.mealSlot = mealSlot
@@ -154,6 +158,8 @@ struct Meal: Codable, Identifiable {
         self.city = city
         self.address = address
         self.mood = mood
+        self.country = country
+        self.countryName = countryName
     }
 }
 
@@ -344,4 +350,35 @@ enum City: String, Codable, CaseIterable {
         case .lianjiangCounty: return 119.950
         }
     }
+}
+
+// MARK: - Country Helper (國家選擇)
+
+struct MealCountry {
+    let code: String   // ISO 3166-1 alpha-2
+    let name: String
+    let flag: String
+
+    static let common: [MealCountry] = [
+        MealCountry(code: "JP", name: "日本", flag: "🇯🇵"),
+        MealCountry(code: "KR", name: "韓國", flag: "🇰🇷"),
+        MealCountry(code: "TH", name: "泰國", flag: "🇹🇭"),
+        MealCountry(code: "VN", name: "越南", flag: "🇻🇳"),
+        MealCountry(code: "SG", name: "新加坡", flag: "🇸🇬"),
+        MealCountry(code: "MY", name: "馬來西亞", flag: "🇲🇾"),
+        MealCountry(code: "HK", name: "香港", flag: "🇭🇰"),
+        MealCountry(code: "MO", name: "澳門", flag: "🇲🇴"),
+        MealCountry(code: "CN", name: "中國", flag: "🇨🇳"),
+        MealCountry(code: "PH", name: "菲律賓", flag: "🇵🇭"),
+        MealCountry(code: "ID", name: "印尼", flag: "🇮🇩"),
+        MealCountry(code: "US", name: "美國", flag: "🇺🇸"),
+        MealCountry(code: "GB", name: "英國", flag: "🇬🇧"),
+        MealCountry(code: "FR", name: "法國", flag: "🇫🇷"),
+        MealCountry(code: "IT", name: "義大利", flag: "🇮🇹"),
+        MealCountry(code: "DE", name: "德國", flag: "🇩🇪"),
+        MealCountry(code: "ES", name: "西班牙", flag: "🇪🇸"),
+        MealCountry(code: "AU", name: "澳洲", flag: "🇦🇺"),
+        MealCountry(code: "NZ", name: "紐西蘭", flag: "🇳🇿"),
+        MealCountry(code: "CA", name: "加拿大", flag: "🇨🇦"),
+    ]
 }

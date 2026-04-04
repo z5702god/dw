@@ -110,6 +110,25 @@ struct MealFormView: View {
                     }
                 }
 
+                // 國家標記（沒有自動偵測到時才顯示）
+                if viewModel.country == nil {
+                    Section("在哪個國家？") {
+                        Picker("國家", selection: $viewModel.country) {
+                            Text("台灣（預設）").tag(String?.none)
+                            ForEach(MealCountry.common, id: \.code) { c in
+                                Text("\(c.flag) \(c.name)").tag(Optional(c.code))
+                            }
+                        }
+                        .onChange(of: viewModel.country) {
+                            if let code = viewModel.country {
+                                viewModel.countryName = MealCountry.common.first { $0.code == code }?.name
+                            } else {
+                                viewModel.countryName = nil
+                            }
+                        }
+                    }
+                }
+
                 // 評價
                 Section("好吃嗎？") {
                     Picker("評價", selection: $viewModel.rating) {

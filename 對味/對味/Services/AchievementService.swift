@@ -89,6 +89,22 @@ final class AchievementService {
         case .totalRedemptions(let target):
             let redeemed = rewards.filter { $0.status == .redeemed || $0.status == .completed }
             return redeemed.count >= target
+
+        // 國際美食
+        case .firstInternational:
+            return !internationalMeals(meals: meals, userId: userId).isEmpty
+
+        case .countryCount(let target):
+            return uniqueCountries(meals: meals, userId: userId).count >= target
+
+        case .internationalMealCount(let target):
+            return internationalMeals(meals: meals, userId: userId).count >= target
+
+        case .coupleCountryCount(let target):
+            return coupleCountries(meals: meals, userId: userId).count >= target
+
+        case .singleCountryMealCount(let target):
+            return maxSingleCountryCount(meals: meals, userId: userId) >= target
         }
     }
 
@@ -138,7 +154,23 @@ final class AchievementService {
             let count = rewards.filter { $0.status == .redeemed || $0.status == .completed }.count
             return (count, target)
 
-        case .firstPoint, .monthlyPerfect, .firstDuo, .monthlySync, .firstRedeem:
+        case .countryCount(let target):
+            let count = uniqueCountries(meals: meals, userId: userId).count
+            return (count, target)
+
+        case .internationalMealCount(let target):
+            let count = internationalMeals(meals: meals, userId: userId).count
+            return (count, target)
+
+        case .coupleCountryCount(let target):
+            let count = coupleCountries(meals: meals, userId: userId).count
+            return (count, target)
+
+        case .singleCountryMealCount(let target):
+            let count = maxSingleCountryCount(meals: meals, userId: userId)
+            return (count, target)
+
+        case .firstPoint, .monthlyPerfect, .firstDuo, .monthlySync, .firstRedeem, .firstInternational:
             return nil
         }
     }
@@ -383,6 +415,37 @@ final class AchievementService {
         let partnerDays = daysRecordedInMonth(by: partnerId)
 
         return myDays >= 20 && partnerDays >= 20
+    }
+
+    // MARK: - International Helpers
+
+    private func internationalMeals(meals: [Meal], userId: String) -> [Meal] {
+        meals.filter { $0.userId == userId && $0.country != nil && $0.country != "TW" }
+    }
+
+    private func uniqueCountries(meals: [Meal], userId: String) -> Set<String> {
+        Set(internationalMeals(meals: meals, userId: userId).compactMap { $0.country })
+    }
+
+    private func coupleCountries(meals: [Meal], userId: String) -> Set<String> {
+        guard let partnerId else { return [] }
+        let myCountries = uniqueCountries(meals: meals, userId: userId)
+        let partnerCountries = Set(
+            meals.filter { $0.userId == partnerId && $0.country != nil && $0.country != "TW" }
+                .compactMap { $0.country }
+        )
+        return myCountries.intersection(partnerCountries)
+    }
+
+    private func maxSingleCountryCount(meals: [Meal], userId: String) -> Int {
+        let intlMeals = internationalMeals(meals: meals, userId: userId)
+        var countByCountry: [String: Int] = [:]
+        for meal in intlMeals {
+            if let country = meal.country {
+                countByCountry[country, default: 0] += 1
+            }
+        }
+        return countByCountry.values.max() ?? 0
     }
 
     // MARK: - Update Streak in Firestore
